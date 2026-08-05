@@ -166,6 +166,19 @@ html, body {
 }
 .coach-hero__sub { font-size: 12px; color: var(--text-1); margin-top: 4px; }
 
+/* Free mode cannot see the player's gaze, so every gaze-derived number is
+   hidden rather than shown as a zero that reads as a broken app. */
+.free-note {
+  display: none; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 14px 18px; background: var(--surface); border-radius: var(--radius);
+  margin-bottom: 12px;
+}
+.free-note p { color: var(--text-1); font-size: 13.5px; line-height: 1.5; max-width: 520px; }
+.coach-content.is-free .free-note { display: flex; }
+.coach-content.is-free .mas-card,
+.coach-content.is-free #metricsGrid,
+.coach-content.is-free .mc--gaze { display: none; }
+
 /* ─── Metrics: primary KPI cards + secondary chips ─── */
 .metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 12px; }
 /* Secondary metrics read as a quiet strip under the four that matter, not as

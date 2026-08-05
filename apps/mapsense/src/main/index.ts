@@ -557,10 +557,6 @@ function registerIpcHandlers(): void {
     pushPanelState();
   });
 
-  ipcMain.handle(IPC.MARK_MANUAL_GLANCE, () => {
-    sessionEngine.markManualGlance();
-  });
-
   ipcMain.handle(IPC.SET_ENTITLEMENT, (_e, tier: EntitlementTier) => {
     return setEntitlement(tier);
   });

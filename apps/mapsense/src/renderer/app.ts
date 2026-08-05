@@ -38,7 +38,6 @@ interface MapSenseApi {
   patchSettings(patch: Partial<MapSenseSettings>): Promise<MapSenseSettings>;
   startTraining(): Promise<void>;
   stopTraining(): Promise<void>;
-  markManualGlance(): Promise<void>;
   setEntitlement(tier: string): Promise<string>;
   pickCustomSound(): Promise<string>;
   openRegionOverlay(): Promise<MinimapRect | null>;
@@ -163,6 +162,7 @@ function syncSettingsToUI(s: MapSenseSettings): void {
   ($('settingLaunchAtStartup') as HTMLInputElement).checked = s.launchAtStartup;
   updateRegionUI(s);
   $('modeLabel').textContent = s.trainingMode === 'paid' ? 'Pro Mode' : 'Free Mode';
+  applyCoachMode();
 }
 
 function syncTogglePills(modes: string[]): void {
@@ -211,6 +211,21 @@ function updateAdBanner(): void {
     currentEntitlement === 'paid' ? 'Pro' :
     currentEntitlement === 'trial' ? 'Pro Trial' : 'Free';
   $('planLabel').textContent = `Plan: ${plan}`;
+  applyCoachMode();
+}
+
+/**
+ * Free mode has no eye tracker, so it cannot know whether the player looked.
+ * Every gaze-derived number (MAS, check rate, response, attention, glance
+ * speed, glances, longest blind, best streak) would be invented, so the coach
+ * page hides them and says why instead of showing zeros that look broken.
+ */
+function applyCoachMode(): void {
+  const gazeMode = currentSettings?.trainingMode === 'paid' && isEntitledToPro();
+  $('coachContent').classList.toggle('is-free', !gazeMode);
+  // Free mode has no glances to count, so the words stop claiming it does.
+  $('timerSuffix').textContent = gazeMode ? 'since last glance' : 'since the last ring';
+  $('alertsLabel').textContent = gazeMode ? 'Tunnel alerts' : 'Reminders';
 }
 
 function isEntitledToPro(): boolean {
@@ -284,7 +299,6 @@ function updateTrainingState(state: TrainingState): void {
   $('btnStartTraining').style.display = isRunning ? 'none' : '';
   $('btnStopTraining').style.display = isRunning ? '' : 'none';
   $('timerDisplay').style.display = isRunning ? '' : 'none';
-  $('btnManualGlance').style.display = isRunning && currentSettings.trainingMode === 'free' ? '' : 'none';
 
   if (isRunning) {
     $('timerValue').textContent = state.timeSinceLastGlanceS.toFixed(1);
@@ -520,7 +534,6 @@ function bindEvents(): void {
     api.track('training_stopped', { trainingMode: currentSettings.trainingMode });
     api.stopTraining();
   });
-  $('btnManualGlance').addEventListener('click', () => api.markManualGlance());
   $('btnClearHistory').addEventListener('click', async () => { await api.clearHistory(); historyRecords = []; renderHistory(); });
   $('btnShareReddit').addEventListener('click', shareReddit);
 
@@ -589,6 +602,7 @@ function bindEvents(): void {
   });
   $('btnCmpSettings').addEventListener('click', () => api.openCmpWindow());
   $('btnUpgradePro').addEventListener('click', () => { api.track('upgrade_clicked'); showProModal(); });
+  $('btnFreeNoteUpgrade').addEventListener('click', () => { api.track('upgrade_clicked'); showProModal(); });
   $('settingAnalytics').addEventListener('change', (e) => {
     const optOut = !(e.target as HTMLInputElement).checked;
     api.setAnalyticsOptOut(optOut);

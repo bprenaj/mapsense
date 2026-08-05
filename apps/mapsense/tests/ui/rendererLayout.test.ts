@@ -65,7 +65,10 @@ describe('Renderer Layout', () => {
   it('coach page has training buttons', () => {
     expect(document.getElementById('btnStartTraining')).not.toBeNull();
     expect(document.getElementById('btnStopTraining')).not.toBeNull();
-    expect(document.getElementById('btnManualGlance')).not.toBeNull();
+    // No manual "I checked the map" button: nobody clicks one mid-game, and
+    // it faked a measurement free mode cannot make.
+    expect(document.getElementById('btnManualGlance')).toBeNull();
+    expect(document.getElementById('freeNote')).not.toBeNull();
   });
 
   it('has 9 metric cells', () => {

@@ -3,7 +3,6 @@ export const IPC = {
   PATCH_SETTINGS: 'mapsense:patchSettings',
   START_TRAINING: 'mapsense:startTraining',
   STOP_TRAINING: 'mapsense:stopTraining',
-  MARK_MANUAL_GLANCE: 'mapsense:markManualGlance',
   SET_ENTITLEMENT: 'mapsense:setEntitlement',
   PICK_CUSTOM_SOUND: 'mapsense:pickCustomSound',
   OPEN_REGION_OVERLAY: 'mapsense:openRegionOverlay',

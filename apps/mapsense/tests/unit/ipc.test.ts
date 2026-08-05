@@ -20,7 +20,6 @@ describe('IPC channel constants', () => {
     expect(IPC.PATCH_SETTINGS).toBeDefined();
     expect(IPC.START_TRAINING).toBeDefined();
     expect(IPC.STOP_TRAINING).toBeDefined();
-    expect(IPC.MARK_MANUAL_GLANCE).toBeDefined();
     expect(IPC.SET_ENTITLEMENT).toBeDefined();
     expect(IPC.PICK_CUSTOM_SOUND).toBeDefined();
     expect(IPC.OPEN_REGION_OVERLAY).toBeDefined();

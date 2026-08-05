@@ -6,6 +6,8 @@ import type { TrainingMode } from '../../shared/constants';
 import { ALERT_COOLDOWN_MS } from '../../shared/constants';
 
 const TICK_MS = 100;
+// How long a free-mode reminder stays lit before the cycle re-arms.
+const FREE_PING_MS = 1800;
 
 export class SessionEngine extends EventEmitter {
   private running = false;
@@ -99,15 +101,6 @@ export class SessionEngine extends EventEmitter {
     }
   }
 
-  /** Manual glance marker for free mode. */
-  markManualGlance(): void {
-    if (!this.running || this.mode !== 'free') return;
-    this.beginGlance();
-    setTimeout(() => {
-      if (this.running) this.endGlance();
-    }, 200);
-  }
-
   getState(): TrainingState {
     const now = Date.now();
     const elapsedS = this.running ? (now - this.startTime) / 1000 : 0;
@@ -134,6 +127,20 @@ export class SessionEngine extends EventEmitter {
         this.lastAlertTime = now;
         this.currentAlertFreeMs = 0;
         this.emit('alert', true);
+
+        // Without an eye tracker the app cannot see whether the player looked,
+        // so a free-mode reminder is a PING on a cycle, not an alarm waiting to
+        // be acknowledged: nothing in free mode could ever acknowledge it, and
+        // an alarm that cannot be cleared just runs forever.
+        if (this.mode === 'free') {
+          this.lastGlanceTime = now;
+          setTimeout(() => {
+            if (this.running && this.alertActive) {
+              this.alertActive = false;
+              this.emit('alert', false);
+            }
+          }, FREE_PING_MS);
+        }
       }
     }
 

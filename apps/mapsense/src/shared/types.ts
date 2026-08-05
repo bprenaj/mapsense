@@ -109,7 +109,6 @@ export interface MapSenseApi {
   patchSettings(patch: Partial<MapSenseSettings>): Promise<MapSenseSettings>;
   startTraining(): Promise<void>;
   stopTraining(): Promise<void>;
-  markManualGlance(): Promise<void>;
   setEntitlement(tier: EntitlementTier): Promise<EntitlementTier>;
   pickCustomSound(): Promise<string>;
   openRegionOverlay(): Promise<MinimapRect | null>;

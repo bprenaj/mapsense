@@ -91,13 +91,6 @@ describe('SessionEngine - Paid Mode', () => {
     expect(state.masScore).toBeGreaterThan(0);
   });
 
-  it('ignores manual glance in paid mode', () => {
-    engine.start();
-    engine.markManualGlance();
-    vi.advanceTimersByTime(300);
-    expect(engine.getState().metrics.glanceCount).toBe(0);
-  });
-
   it('does not process gaze when no minimap rect', () => {
     engine.configure({ mode: 'paid', timeoutS: 5, tolerancePx: 10, minimapRect: null });
     engine.start();

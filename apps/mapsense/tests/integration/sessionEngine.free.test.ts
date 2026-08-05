@@ -54,25 +54,33 @@ describe('SessionEngine - Free Mode', () => {
     expect(alertHandler).toHaveBeenCalledWith(true);
   });
 
-  it('dismisses alert on manual glance', () => {
+  it('clears the reminder on its own, since nothing in free mode can', () => {
+    // An alarm awaiting acknowledgement runs forever here: with no eye tracker
+    // there is nothing that could ever acknowledge it.
     const alertHandler = vi.fn();
     engine.on('alert', alertHandler);
     engine.start();
     vi.advanceTimersByTime(5100);
     expect(alertHandler).toHaveBeenCalledWith(true);
-    engine.markManualGlance();
-    vi.advanceTimersByTime(250);
+    vi.advanceTimersByTime(2000);
     expect(alertHandler).toHaveBeenCalledWith(false);
   });
 
-  it('counts glances from manual markers', () => {
+  it('re-arms so the reminder repeats on a cycle', () => {
+    const alertHandler = vi.fn();
+    engine.on('alert', alertHandler);
     engine.start();
-    engine.markManualGlance();
-    vi.advanceTimersByTime(300);
-    engine.markManualGlance();
-    vi.advanceTimersByTime(300);
-    const state = engine.getState();
-    expect(state.metrics.glanceCount).toBe(2);
+    vi.advanceTimersByTime(5100);
+    vi.advanceTimersByTime(2000);
+    expect(alertHandler.mock.calls.filter((c) => c[0] === true).length).toBe(1);
+    vi.advanceTimersByTime(5100);
+    expect(alertHandler.mock.calls.filter((c) => c[0] === true).length).toBe(2);
+  });
+
+  it('counts no glances at all, because it cannot see any', () => {
+    engine.start();
+    vi.advanceTimersByTime(12000);
+    expect(engine.getState().metrics.glanceCount).toBe(0);
   });
 
   it('ignores gaze data in free mode', () => {
@@ -87,12 +95,11 @@ describe('SessionEngine - Free Mode', () => {
     const completeHandler = vi.fn();
     engine.on('sessionComplete', completeHandler);
     engine.start();
-    engine.markManualGlance();
     vi.advanceTimersByTime(5000);
     engine.stop();
     expect(completeHandler).toHaveBeenCalled();
     const record = completeHandler.mock.calls[0][0];
-    expect(record.glanceCount).toBe(1);
+    expect(record.glanceCount).toBe(0);
     expect(record.timestamp).toBeGreaterThan(0);
   });
 

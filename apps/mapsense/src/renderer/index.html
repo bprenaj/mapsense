@@ -108,12 +108,15 @@
             <div class="training-row">
               <button id="btnStartTraining" class="btn btn--accent btn--lg">Start Training</button>
               <button id="btnStopTraining" class="btn btn--danger btn--lg" style="display:none;">Stop Training</button>
-              <button id="btnManualGlance" class="btn btn--outline" style="display:none;" title="Tell MapSense you just checked the map.&#10;In Free mode, this replaces eye tracking.">I Checked the Map</button>
               <div id="timerDisplay" class="timer" style="display:none;">
-                <span id="timerValue">0.0</span>s since last glance
+                <span id="timerValue">0.0</span>s <span id="timerSuffix">since last glance</span>
               </div>
             </div>
 
+            <div id="freeNote" class="free-note">
+              <p>Free mode rings on a timer. It cannot see where you look, so there are no awareness stats to show.</p>
+              <button id="btnFreeNoteUpgrade" class="btn btn--accent btn--sm">Unlock real stats</button>
+            </div>
             <div id="metricsGrid" class="metrics-grid">
               <div class="mc mc--kpi" title="How many times per minute you check the minimap.&#10;This is the single strongest predictor of map awareness.&#10;Pro players average 6-8 glances per minute.">
                 <span class="mc-label">Check rate</span>
@@ -151,10 +154,10 @@
 
             <div id="metricsChips" class="metrics-chips">
               <div class="mc mc--chip" title="Total time elapsed since you pressed Start Training."><span class="mc-label">Duration</span><div class="mc-value-row"><span id="metricDuration" class="metric-value">0</span><span class="mc-unit">s</span></div></div>
-              <div class="mc mc--chip" title="Total number of times your eyes entered the minimap region.&#10;Each gaze entry counts as one glance."><span class="mc-label">Glances</span><div class="mc-value-row"><span id="metricGlances" class="metric-value">0</span><span class="mc-unit"></span></div></div>
-              <div class="mc mc--chip" title="The single longest period you went without checking the map.&#10;This is your worst tunnel vision moment. Keep this low."><span class="mc-label">Longest blind</span><div class="mc-value-row"><span id="metricLongestGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
-              <div class="mc mc--chip" title="Number of times the alert fired because you exceeded the timeout.&#10;Fewer alerts = better awareness."><span class="mc-label">Tunnel alerts</span><div class="mc-value-row"><span id="metricAlerts" class="metric-value">0</span><span class="mc-unit"></span></div></div>
-              <div class="mc mc--chip" title="The longest period where you checked the map frequently enough&#10;that the alert never fired. Longer = more consistent."><span class="mc-label">Best streak</span><div class="mc-value-row"><span id="metricAlertFree" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
+              <div class="mc mc--chip mc--gaze" title="Total number of times your eyes entered the minimap region.&#10;Each gaze entry counts as one glance."><span class="mc-label">Glances</span><div class="mc-value-row"><span id="metricGlances" class="metric-value">0</span><span class="mc-unit"></span></div></div>
+              <div class="mc mc--chip mc--gaze" title="The single longest period you went without checking the map.&#10;This is your worst tunnel vision moment. Keep this low."><span class="mc-label">Longest blind</span><div class="mc-value-row"><span id="metricLongestGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
+              <div class="mc mc--chip" title="Number of times the alert fired because you exceeded the timeout.&#10;Fewer alerts = better awareness."><span class="mc-label" id="alertsLabel">Tunnel alerts</span><div class="mc-value-row"><span id="metricAlerts" class="metric-value">0</span><span class="mc-unit"></span></div></div>
+              <div class="mc mc--chip mc--gaze" title="The longest period where you checked the map frequently enough&#10;that the alert never fired. Longer = more consistent."><span class="mc-label">Best streak</span><div class="mc-value-row"><span id="metricAlertFree" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
             </div>
 
             <div class="info-bar">
