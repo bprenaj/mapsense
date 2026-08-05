@@ -34,13 +34,15 @@ describe('Renderer Layout', () => {
     expect(pages).toEqual(['coach', 'settings', 'history', 'system']);
   });
 
-  it('has MapSense avatar in sidebar', () => {
-    const img = document.querySelector('.nav-avatar') as HTMLImageElement;
-    expect(img).not.toBeNull();
-    expect(img.alt).toBe('MapSense');
-    // The sidebar mark is the app icon itself: the bell on transparency, so it
-    // sits directly on the sidebar with no plate behind it.
-    expect(img.getAttribute('src')).toBe('assets/bell.png');
+  it('states the brand once, as a lockup in the hero', () => {
+    // The mark lives in the hero next to the name, not in the sidebar where it
+    // was a control that did nothing when clicked, and the title bar says
+    // neither, so the product name appears exactly once on the page.
+    const mark = document.querySelector('#coachHero .coach-hero__mark') as HTMLImageElement;
+    expect(mark).not.toBeNull();
+    expect(mark.getAttribute('src')).toBe('assets/bell.png');
+    expect(document.querySelector('.side-nav img')).toBeNull();
+    expect(document.querySelector('#titleBar')!.textContent).not.toContain('MapSense');
   });
 
   it('has four page sections', () => {
@@ -81,6 +83,15 @@ describe('Renderer Layout', () => {
     // (scripts/make-hero-art.js), never the raw source jpg: a CSS mask over the
     // source would erase the bell, which sits at the artwork's left edge.
     expect(img.getAttribute('src')).toBe('assets/mapsense-hero.png');
+  });
+
+  it('re-creates the ad view when returning to free, not just un-hides it', () => {
+    // display:none tears the owadview down under ow-electron and un-hiding
+    // does not restore it, so paid -> free must mount a fresh element.
+    const src = fs.readFileSync(
+      path.join(__dirname, '..', '..', 'src', 'renderer', 'app.ts'), 'utf-8');
+    expect(src).toContain("document.createElement('owadview')");
+    expect(src).toMatch(/if \(showAds && !adsVisible\) remountAdView\(\);/);
   });
 
   it('puts the ad banner directly under the hero, above the session content', () => {

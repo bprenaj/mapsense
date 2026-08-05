@@ -13,7 +13,7 @@
   --text-2: #7f96b2;
   --accent: #00d4ff;
   --accent-2: #33ddff;
-  --gold: #c8a246;
+  --gold: #00d4ff; /* retired as a second accent, kept as an alias */
   --danger: #ff5252;
   --danger-2: #ff718f;
   --good: #7ecfa0;
@@ -45,10 +45,6 @@ html, body {
   background: linear-gradient(180deg, #0b1425, #0d172a);
   display: flex; flex-direction: column; align-items: center; gap: 6px;
 }
-.nav-brand { margin-bottom: 8px; }
-/* The mark is the bell itself, no plate: build/icon-src/icon-256.png is
-   transparent, so it sits directly on the sidebar. */
-.nav-avatar { width: 46px; height: 46px; object-fit: contain; display: block; }
 .nav-item {
   width: 62px; min-height: 54px; border-radius: 12px; border: 1px solid transparent;
   background: transparent; color: var(--text-2); cursor: pointer;
@@ -83,8 +79,6 @@ html, body {
 .drag-region { -webkit-app-region: drag; }
 .no-drag { -webkit-app-region: no-drag; }
 .title-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
-.title-name { font-family: 'Chakra Petch', sans-serif; font-size: 18px; font-weight: 700; color: var(--accent); }
-.title-sub { color: var(--text-2); font-size: 12px; }
 .title-status { display: flex; align-items: center; gap: 8px; }
 
 .beam-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -109,7 +103,7 @@ html, body {
 .win-btn--close:hover { background: var(--danger); color: #fff; }
 
 /* ─── Content ─── */
-.content { overflow-y: auto; overflow-x: hidden; padding: 14px 24px; min-height: 0; }
+.content { overflow-y: auto; overflow-x: hidden; padding: 18px 26px; min-height: 0; }
 .page { display: none; }
 .page--active { display: block; }
 .page-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 18px; }
@@ -126,7 +120,7 @@ html, body {
 /* ─── MAS card ─── */
 .mas-card {
   display: flex; align-items: center; gap: 20px;
-  padding: 12px 20px; background: var(--surface); border-radius: var(--radius); margin-bottom: 8px;
+  padding: 16px 22px; background: var(--surface); border-radius: var(--radius); margin-bottom: 14px;
   cursor: help;
 }
 .mas-score-wrap { text-align: center; min-width: 90px; }
@@ -134,11 +128,11 @@ html, body {
 .mas-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: 2px; text-transform: uppercase; }
 .mas-info { flex: 1; }
 .mas-bar { height: 6px; background: var(--bg-1); border-radius: 3px; overflow: hidden; }
-.mas-bar__fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 3px; transition: width 0.3s; }
+.mas-bar__fill { height: 100%; width: 0%; background: var(--accent); border-radius: 3px; transition: width 0.3s; }
 
 /* ─── Training controls ─── */
-.training-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
-.timer { font-size: 16px; color: var(--warning); font-weight: 700; font-variant-numeric: tabular-nums; }
+.training-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+.timer { font-size: 16px; color: var(--text-1); font-weight: 700; font-variant-numeric: tabular-nums; }
 .timer.alert-active { color: var(--danger); animation: blink 0.5s infinite; }
 
 /* ─── Coach hero header ─── */
@@ -164,7 +158,8 @@ html, body {
   position: absolute; inset: 0;
   background: linear-gradient(90deg, rgba(8,14,36,0.55) 0%, rgba(8,14,36,0.18) 30%, rgba(8,14,36,0) 52%);
 }
-.coach-hero__text { position: relative; padding: 0 22px; }
+.coach-hero__text { position: relative; padding: 0 26px; display: flex; align-items: center; gap: 16px; }
+.coach-hero__mark { width: 54px; height: 54px; object-fit: contain; flex: none; }
 .coach-hero__title {
   font-family: 'Chakra Petch', sans-serif; font-size: 22px; font-weight: 700;
   color: var(--text-0); letter-spacing: 0.5px;
@@ -172,12 +167,12 @@ html, body {
 .coach-hero__sub { font-size: 12px; color: var(--text-1); margin-top: 4px; }
 
 /* ─── Metrics: primary KPI cards + secondary chips ─── */
-.metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 6px; }
+.metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 12px; }
 /* Secondary metrics read as a quiet strip under the four that matter, not as
    five more cards competing with them for the same attention. */
 .metrics-chips {
   display: flex; flex-wrap: wrap; align-items: baseline;
-  gap: 2px 20px; padding: 2px 4px; margin-bottom: 8px;
+  gap: 4px 22px; padding: 2px 4px; margin-bottom: 14px;
 }
 .mc {
   padding: 10px 12px; background: var(--surface); border-radius: var(--radius);
@@ -195,9 +190,11 @@ html, body {
 .mc-value-row { display: flex; align-items: baseline; gap: 4px; }
 .metric-value { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .mc-unit { font-size: 10px; color: var(--text-2); }
-.metric-value--good { color: var(--good); }
-.metric-value--warn { color: var(--warn); }
-.metric-value--bad { color: var(--bad); }
+/* Values stay monochrome. Where a number sits against its target is shown
+   by the benchmark bar under it, not by tinting nine numbers three ways. */
+.metric-value--good,
+.metric-value--warn,
+.metric-value--bad { color: var(--text-0); }
 
 /* Benchmark bar: where you are vs the target band */
 .kpi-bench { margin-top: 6px; }
@@ -282,23 +279,23 @@ html, body {
 /* ─── Settings cards ─── */
 .settings-scroll { display: flex; flex-direction: column; gap: 16px; max-width: 580px; padding-bottom: 24px; }
 .s-card {
-  background: var(--surface); border-radius: 12px; padding: 20px 24px;
+  background: var(--surface); border-radius: 12px; padding: 22px 26px;
 }
 .s-card__title {
-  font-family: 'Chakra Petch', sans-serif; font-size: 13px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 1px; color: var(--text-0); margin-bottom: 4px;
+  font-family: 'Chakra Petch', sans-serif; font-size: 16px; font-weight: 700;
+  letter-spacing: 0.4px; color: var(--text-0); margin-bottom: 5px;
 }
-.s-card__hint { font-size: 12px; color: var(--text-2); margin-bottom: 14px; line-height: 1.5; }
+.s-card__hint { font-size: 13.5px; color: var(--text-2); margin-bottom: 16px; line-height: 1.55; }
 .s-card__sub {
-  font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
-  color: var(--text-1); margin: 14px 0 4px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.2px;
+  color: var(--text-1); margin: 16px 0 6px;
 }
 
 /* ─── Toggle pills ─── */
 .toggle-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
 .toggle-pill {
-  padding: 7px 18px; border-radius: 8px; border: 1px solid var(--line);
-  background: transparent; color: var(--text-2); font-size: 13px; font-weight: 600;
+  padding: 10px 22px; border-radius: 10px; border: 1px solid var(--line);
+  background: transparent; color: var(--text-2); font-size: 14.5px; font-weight: 700;
   cursor: pointer; transition: all 0.15s; font-family: inherit;
 }
 .toggle-pill:hover { border-color: #455978; color: var(--text-0); }
@@ -310,25 +307,25 @@ html, body {
 /* ─── Form controls ─── */
 .sel, .inp {
   background: var(--bg-1); border: 1px solid var(--line); border-radius: 8px;
-  color: var(--text-0); padding: 8px 12px; font-size: 13px; outline: none; width: 100%; max-width: 320px;
+  color: var(--text-0); padding: 11px 14px; font-size: 14.5px; outline: none; width: 100%; max-width: 320px;
   font-family: inherit;
 }
 .sel:focus, .inp:focus { border-color: var(--accent); }
 .inp--sm { max-width: 140px; }
 .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .slider {
-  -webkit-appearance: none; appearance: none; flex: 1; height: 5px;
-  border-radius: 3px; background: var(--bg-1); outline: none;
+  -webkit-appearance: none; appearance: none; flex: 1; height: 8px;
+  border-radius: 4px; background: var(--bg-1); outline: none;
 }
 .slider::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none; width: 16px; height: 16px;
-  border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid var(--bg-0);
+  -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--bg-0);
 }
-.slider-val { font-size: 13px; color: var(--text-1); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.slider-val { font-size: 15px; color: var(--text-1); min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .inline-row { display: flex; align-items: center; gap: 8px; }
-.chk { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-1); cursor: pointer; }
-.chk input[type="checkbox"] { accent-color: var(--accent); }
-.hint { font-size: 12px; color: var(--text-2); }
+.chk { display: flex; align-items: center; gap: 8px; font-size: 14.5px; color: var(--text-1); cursor: pointer; }
+.chk input[type="checkbox"] { accent-color: var(--accent); width: 18px; height: 18px; }
+.hint { font-size: 13px; color: var(--text-2); }
 .row-actions { display: flex; gap: 8px; margin-top: 12px; }
 
 /* ─── History ─── */
@@ -419,7 +416,7 @@ html, body {
 .update-banner {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px; padding: 8px 16px;
-  background: linear-gradient(90deg, rgba(0,212,255,0.12), rgba(0,229,160,0.10));
+  background: rgba(0,212,255,0.10);
   border-bottom: 1px solid var(--line);
   font-size: 13px; color: var(--text-0);
 }

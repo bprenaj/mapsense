@@ -10,9 +10,6 @@
 <body>
   <div class="app-shell">
     <aside class="side-nav">
-      <div class="nav-brand">
-        <img src="assets/bell.png" alt="MapSense" class="nav-avatar">
-      </div>
       <button class="nav-item nav-active" data-page="coach" title="Coach">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
         <span>Coach</span>
@@ -34,8 +31,7 @@
     <section class="main-area">
       <header id="titleBar" class="title-bar drag-region">
         <div class="title-left drag-region">
-          <h1 class="title-name">MapSense</h1>
-          <span class="title-sub">Minimap awareness coach</span>
+          
         </div>
         <div class="title-status no-drag">
           <span id="beamStatusDot" class="beam-dot beam-dot--off"></span>
@@ -64,8 +60,11 @@
             <img src="assets/mapsense-hero.png" alt="" class="coach-hero__img">
             <div class="coach-hero__scrim"></div>
             <div class="coach-hero__text">
-              <h2 class="coach-hero__title">MapSense</h2>
-              <p class="coach-hero__sub">Your Pavlovian minimap awareness coach.</p>
+              <img src="assets/bell.png" alt="" class="coach-hero__mark">
+              <div>
+                <h2 class="coach-hero__title">MapSense</h2>
+                <p class="coach-hero__sub">Your Pavlovian minimap awareness coach</p>
+              </div>
             </div>
           </div>
 
@@ -311,7 +310,7 @@
           <div class="settings-scroll">
 
             <div class="s-card">
-              <h3 class="s-card__title" title="MapSense keeps itself up to date. Updates download in the background; you choose when to restart.">System</h3>
+              <h3 class="s-card__title" title="MapSense keeps itself up to date. Updates download in the background; you choose when to restart.">Updates &amp; Startup</h3>
               <div class="sys-rows">
                 <div class="sys-row">
                   <span class="sys-row__text">
@@ -331,7 +330,7 @@
             </div>
 
             <div class="s-card">
-              <h3 class="s-card__title" title="Talk to the developer, report bugs, request features.">Feedback</h3>
+              <h3 class="s-card__title" title="Talk to the developer, report bugs, request features.">Help</h3>
               <div class="sys-rows">
                 <button id="btnFeedbackBoard" class="sys-row sys-row--action" title="Report a bug or request a feature">
                   <span class="sys-row__text">

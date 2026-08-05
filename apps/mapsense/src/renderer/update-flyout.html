@@ -4,51 +4,56 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'">
   <title>MapSense Update</title>
-  <!-- Brand-styled tray-corner flyout, visual language copied from tinomo's
-       tray panel (row + status dot + label/desc + footer buttons) and colored
-       with the live MapSense tokens from styles.css (Brand Tokens Rule). -->
+  <!-- Tray-corner flyout. The visual language is tinomo's tray panel (card,
+       groups, divider, icon + label/desc rows, footer buttons); the colours are
+       the live MapSense tokens from styles.css (Brand Tokens Rule), spending
+       ONE accent and nothing else. The card carries no brand label: the tray
+       icon the user just clicked already said whose panel this is. -->
   <style>
     :root {
-      --accent:#00d4ff; --bg-0:#080e24; --panel:#0c1730; --panel-2:#121f35; --panel-3:#182b47;
-      --accent-dim:rgba(0,212,255,0.16); --accent-glow:rgba(0,212,255,0.38);
-      --border:rgba(0,212,255,0.12); --border-strong:rgba(0,212,255,0.28);
+      --accent:#00d4ff;
+      --bg-0:#080e24; --panel:#0c1730; --panel-2:#121f35; --panel-3:#182b47;
+      --accent-dim:rgba(0,212,255,0.16);
+      --border:rgba(0,212,255,0.10); --border-strong:rgba(0,212,255,0.25);
       --text:#e6f1ff; --text2:#7f96b2;
+      --font-ui:'Chakra Petch','Segoe UI',system-ui,sans-serif;
       --r-sm:8px; --r-md:12px;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
-    html, body { height:100%; overflow:hidden; background:transparent; }
+    /* The window sizes itself to this card, so neither the document nor the
+       body may ever scroll: a stock Windows scrollbar over the transparent
+       padding is exactly what we are avoiding. */
+    html, body { height:100%; overflow:hidden; }
     body {
-      font-family:'Segoe UI', system-ui, sans-serif; color:var(--text);
+      font-family:var(--font-ui); background:transparent; color:var(--text);
       -webkit-font-smoothing:antialiased; font-size:13px; padding:8px;
     }
     .panel {
-      background:var(--panel); border:1px solid var(--border-strong);
-      border-radius:var(--r-md); box-shadow:0 18px 60px rgba(0,0,0,0.6);
-      overflow:hidden; animation:slideIn 0.25s ease-out;
+      display:flex; flex-direction:column; background:var(--panel);
+      border:1px solid var(--border-strong); border-radius:var(--r-md);
+      box-shadow:0 18px 60px rgba(0,0,0,0.6); overflow:hidden;
+      animation:slideIn 0.25s ease-out;
     }
     @keyframes slideIn { from { transform:translateY(10px); opacity:0; } to { transform:translateY(0); opacity:1; } }
-    .brand {
-      padding:8px 12px 0; font-size:10px; font-weight:700;
-      letter-spacing:0.08em; text-transform:uppercase; color:var(--accent);
-    }
     .grp { padding:6px; }
-    .row { display:flex; align-items:center; gap:12px; width:100%; padding:9px 10px; border-radius:var(--r-sm); }
-    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.55;} }
-    .dotwrap { width:16px; display:flex; justify-content:center; flex:none; }
-    .status-dot {
-      width:9px; height:9px; border-radius:50%; flex:none;
-      background:var(--accent); box-shadow:0 0 8px var(--accent-glow);
-      animation:pulse 2.4s infinite;
-    }
+    .divider { height:1px; background:var(--border); margin:0 10px; }
+
+    .row { display:flex; align-items:center; gap:12px; width:100%; padding:9px 10px; border-radius:var(--r-sm); text-align:left; }
+    .ico { width:18px; height:18px; flex:none; color:var(--accent); display:flex; }
+    .ico svg { width:18px; height:18px; }
     .rtext { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
-    .rlabel { font-size:13px; font-weight:600; color:var(--text); letter-spacing:0.2px; }
-    .rdesc { font-size:11.5px; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .rdesc strong { color:var(--text); font-weight:600; }
-    .footer { display:flex; gap:6px; padding:8px; border-top:1px solid var(--border); }
+    .rlabel { font-size:13.5px; font-weight:700; color:var(--text); letter-spacing:0.2px; }
+    .rdesc {
+      font-size:12px; font-weight:400; color:var(--text2);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .rdesc strong { color:var(--text); font-weight:700; }
+
+    .footer { flex:none; display:flex; gap:6px; padding:8px; border-top:1px solid var(--border); }
     .fbtn {
-      flex:1; padding:7px 8px; background:var(--panel-2); border:1px solid var(--border);
-      border-radius:var(--r-sm); color:var(--text2); font-family:inherit;
-      font-size:12px; font-weight:600; cursor:pointer;
+      flex:1; padding:8px; background:var(--panel-2); border:1px solid var(--border);
+      border-radius:var(--r-sm); color:var(--text2); font-family:var(--font-ui);
+      font-size:12.5px; font-weight:700; cursor:pointer;
     }
     .fbtn:hover { background:var(--panel-3); color:var(--text); }
     .fbtn.primary { background:var(--accent-dim); border-color:var(--border-strong); color:var(--accent); }
@@ -57,16 +62,16 @@
 </head>
 <body>
   <div class="panel">
-    <div class="brand">MapSense</div>
     <div class="grp">
       <div class="row">
-        <span class="dotwrap"><span class="status-dot"></span></span>
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v5h-5"/></svg></span>
         <span class="rtext">
           <span class="rlabel">Software update</span>
           <span class="rdesc"><strong id="flyoutVersion">New version</strong> downloaded. Restart applies it in seconds.</span>
         </span>
       </div>
     </div>
+    <div class="divider"></div>
     <div class="footer">
       <button id="btnFlyoutInstall" class="fbtn primary">Restart to Update</button>
       <button id="btnFlyoutLater" class="fbtn" title="Installs on its own the next time you quit">Later</button>

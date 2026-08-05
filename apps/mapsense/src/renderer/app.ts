@@ -185,9 +185,28 @@ function updateRegionUI(s: MapSenseSettings): void {
   }
 }
 
+let adsVisible = true;
+
+/**
+ * Re-create the <owadview>. Hiding an ancestor with display:none tears the ad
+ * view down inside the ow-electron runtime, and un-hiding it does NOT bring it
+ * back, so going paid and then returning to free leaves an empty slot. The
+ * element itself is the ad view's lifetime, so a fresh one is a fresh view.
+ */
+function remountAdView(): void {
+  const slot = document.querySelector('#adBanner .ad-slot');
+  const existing = slot?.querySelector('owadview');
+  if (!slot || !existing) return;
+  existing.replaceWith(document.createElement('owadview'));
+}
+
 function updateAdBanner(): void {
   // Ads are a free-tier surface; trial and paid are both ad-free.
-  $('adBanner').style.display = currentEntitlement === 'free' ? '' : 'none';
+  const showAds = currentEntitlement === 'free';
+  $('adBanner').style.display = showAds ? '' : 'none';
+  // Only on the hidden -> shown edge, or every settings write would thrash it.
+  if (showAds && !adsVisible) remountAdView();
+  adsVisible = showAds;
   const plan =
     currentEntitlement === 'paid' ? 'Pro' :
     currentEntitlement === 'trial' ? 'Pro Trial' : 'Free';
