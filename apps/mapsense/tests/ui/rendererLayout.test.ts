@@ -38,6 +38,9 @@ describe('Renderer Layout', () => {
     const img = document.querySelector('.nav-avatar') as HTMLImageElement;
     expect(img).not.toBeNull();
     expect(img.alt).toBe('MapSense');
+    // The sidebar mark is the app icon itself: the bell on transparency, so it
+    // sits directly on the sidebar with no plate behind it.
+    expect(img.getAttribute('src')).toBe('assets/bell.png');
   });
 
   it('has four page sections', () => {
@@ -71,8 +74,19 @@ describe('Renderer Layout', () => {
   it('coach page has a hero header with artwork', () => {
     const hero = document.getElementById('coachHero');
     expect(hero).not.toBeNull();
-    expect(hero!.querySelector('img.coach-hero__img')).not.toBeNull();
+    const img = hero!.querySelector('img.coach-hero__img') as HTMLImageElement;
+    expect(img).not.toBeNull();
     expect(hero!.querySelector('.coach-hero__title')).not.toBeNull();
+    // The hero uses the derived artwork whose left edge is already feathered
+    // (scripts/make-hero-art.js), never the raw source jpg: a CSS mask over the
+    // source would erase the bell, which sits at the artwork's left edge.
+    expect(img.getAttribute('src')).toBe('assets/mapsense-hero.png');
+  });
+
+  it('puts the ad banner directly under the hero, above the session content', () => {
+    const children = Array.from(document.getElementById('pageCoach')!.children).map((e) => e.id);
+    expect(children.indexOf('adBanner')).toBe(children.indexOf('coachHero') + 1);
+    expect(children.indexOf('adBanner')).toBeLessThan(children.indexOf('coachContent'));
   });
 
   it('splits metrics into 4 primary KPI cards and 5 secondary chips', () => {

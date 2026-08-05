@@ -411,14 +411,14 @@ npm run lint
 npm test
 ```
 
-### Test structure (192 tests, 16 files)
+### Test structure (199 tests, 16 files)
 
 | Suite | Files | Tests | Coverage |
 |-------|-------|-------|----------|
 | `tests/unit/` | 12 | 116 | MAS, region, presets, schemas, entitlement (+persistence), alertManager, analytics guards, IPC, updater state machine (+cancel/error recovery, ready-state recheck, cache hygiene), IRL webhook server (+bind retry), file logger (+rotation), uninstall cleanup cross-check |
 | `tests/integration/` | 2 | 20 | Session engine free + paid modes |
-| `tests/ui/` | 1 | 38 | Renderer DOM structure (all elements, metrics, onboarding, update banner, pro modal, autostart toggle, ad slot, offline-safety/CSP) |
-| `tests/e2e/` | 1 | 18 | Smoke checks (files, scripts, HTML references, auto-update wiring, main-process hardening, release-gate parity, no debug cruft) |
+| `tests/ui/` | 1 | 41 | Renderer DOM structure (all elements, metrics, onboarding, update banner, pro modal, autostart toggle, ad slot/placement, bell mark + hero artwork, offline-safety/CSP) |
+| `tests/e2e/` | 1 | 22 | Smoke checks (files, scripts, HTML references, bundled-asset coverage, icon sources, auto-update wiring, main-process hardening, release-gate parity, no debug cruft) |
 
 When adding new UI elements, add corresponding tests to `tests/ui/rendererLayout.test.ts`.
 Lint runs clean with zero warnings; keep it that way.
@@ -428,7 +428,10 @@ Lint runs clean with zero warnings; keep it that way.
 Packaged runs mirror all console output to `%APPDATA%/MapSense/logs/main.log`
 (512KB rotation, one `.1` generation kept; `src/main/services/logger.ts`).
 When a user reports a bug, ask for that file first. Uncaught exceptions,
-unhandled rejections, and renderer crashes are logged there too.
+unhandled rejections, and renderer crashes are logged there too, as are
+renderer console warnings and errors (`forwardRendererConsole` in
+`src/main/index.ts`). Electron's file logger only wraps MAIN-process console,
+so without that forward a renderer-side failure leaves no trace at all.
 
 ### Packaged smoke test (before any release)
 

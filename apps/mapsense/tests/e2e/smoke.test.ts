@@ -221,4 +221,51 @@ describe('Smoke Tests', () => {
     const copyStatic = fs.readFileSync(path.join(ROOT, 'scripts', 'copy-static.mjs'), 'utf-8');
     expect(copyStatic).toContain('update-flyout.html');
   });
+
+  it('renderer console warnings and errors reach the app log', () => {
+    // Electron's file logger only wraps MAIN-process console, so without this
+    // forward a renderer-side failure leaves no trace in main.log at all.
+    const main = fs.readFileSync(path.join(ROOT, 'src', 'main', 'index.ts'), 'utf-8');
+    expect(main).toContain("win.webContents.on('console-message'");
+    expect(main).toMatch(/forwardRendererConsole\(win, 'Renderer'\)/);
+  });
+
+  it('the custom sound picker reports every outcome instead of failing silently', () => {
+    const main = fs.readFileSync(path.join(ROOT, 'src', 'main', 'index.ts'), 'utf-8');
+    for (const marker of ['Custom sound: opening picker', 'Custom sound: cancelled',
+      'Custom sound: picker failed']) {
+      expect(main, `Missing picker log: ${marker}`).toContain(marker);
+    }
+    // The renderer must not let a rejected invoke become an unhandled
+    // rejection, which is what turns a broken picker into a dead button.
+    const renderer = fs.readFileSync(path.join(ROOT, 'src', 'renderer', 'app.ts'), 'utf-8');
+    const handler = renderer.slice(renderer.indexOf("$('btnPickSound')"));
+    expect(handler.slice(0, 600)).toContain('catch');
+  });
+
+  it('every image the renderer references is actually bundled', () => {
+    const indexHtml = fs.readFileSync(path.join(ROOT, 'src', 'renderer', 'index.html'), 'utf-8');
+    const copyStatic = fs.readFileSync(path.join(ROOT, 'scripts', 'copy-static.mjs'), 'utf-8');
+    const referenced = [...indexHtml.matchAll(/src="assets\/([^"]+)"/g)].map((m) => m[1]);
+    expect(referenced.length).toBeGreaterThan(0);
+    for (const file of referenced) {
+      // Either committed under src/renderer/assets (copied wholesale) or named
+      // by copy-static, which derives it from build/ or images/.
+      const committed = fs.existsSync(path.join(ROOT, 'src', 'renderer', 'assets', file));
+      expect(committed || copyStatic.includes(file), `Unbundled asset: ${file}`).toBe(true);
+    }
+  });
+
+  it('the app mark is the bell alone, generated from one source', () => {
+    // The plate is stripped from the designer's artwork by strip-icon-bg.js and
+    // build/icon-src is the single source for the ico, the tray, and the
+    // sidebar mark, so the four never drift apart.
+    for (const f of ['scripts/render-mark.js', 'scripts/make-hero-art.js',
+      'build/icon-src/original/icon-master.svg', 'build/icon-src/icon-256.png']) {
+      expect(fs.existsSync(path.join(ROOT, f)), `Missing: ${f}`).toBe(true);
+    }
+    const copyStatic = fs.readFileSync(path.join(ROOT, 'scripts', 'copy-static.mjs'), 'utf-8');
+    expect(copyStatic).toContain("'icon-256.png'");
+    expect(copyStatic).toContain("'bell.png'");
+  });
 });

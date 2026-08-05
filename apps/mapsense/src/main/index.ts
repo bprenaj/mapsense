@@ -103,6 +103,51 @@ function configureSession(settings: MapSenseSettings): void {
   alertManager.configure(settings.alertModes, settings.volume, settings.customSoundPath);
 }
 
+const RENDERER_LOG_BURST = 40;
+const RENDERER_LOG_WINDOW_MS = 10_000;
+
+/**
+ * Mirror a renderer's console warnings and errors into the app log.
+ *
+ * Electron's file logger only wraps MAIN-process console, so a bug that lives
+ * in a renderer (a dead click handler, a rejected IPC call) leaves zero trace
+ * in main.log, which is exactly the "it does nothing and I have no logs" report.
+ * Info is dropped so the file is not drowned, and a burst limit stops an error
+ * loop from filling the disk.
+ */
+function forwardRendererConsole(win: BrowserWindow, tag: string): void {
+  let count = 0;
+  let windowStart = 0;
+  // Electron 36 replaced this event's positional (level, message, line,
+  // sourceId) arguments with a single details object. The dev runtime and the
+  // packaged ow-electron runtime can be on different sides of that change, so
+  // accept both shapes rather than betting on one.
+  win.webContents.on('console-message', (...args: unknown[]) => {
+    const [first, second] = args.slice(1);
+    const details = (first && typeof first === 'object' ? first : null) as
+      | { level?: string | number; message?: string }
+      | null;
+    const level = details ? details.level : first;
+    const message = details ? String(details.message ?? '') : String(second ?? '');
+    const isError = level === 'error' || level === 3;
+    const isWarning = level === 'warning' || level === 2;
+    if (!isError && !isWarning) return;
+
+    const now = Date.now();
+    if (now - windowStart > RENDERER_LOG_WINDOW_MS) {
+      windowStart = now;
+      count = 0;
+    }
+    count += 1;
+    if (count > RENDERER_LOG_BURST) return;
+    if (count === RENDERER_LOG_BURST) {
+      console.warn(`[${tag}] console flood, suppressing until it settles`);
+      return;
+    }
+    (isError ? console.error : console.warn)(`[${tag}] ${message}`);
+  });
+}
+
 /**
  * Branded window/taskbar/Alt-Tab icon. Set explicitly in every run: the
  * window icon is what Windows shows on the taskbar button and in Alt-Tab
@@ -137,6 +182,7 @@ function createMainWindow(): BrowserWindow {
   });
 
   win.loadFile(getRendererPath('index.html'));
+  forwardRendererConsole(win, 'Renderer');
 
   // External links (Discord, Reddit share, IRL guide) go to the default
   // browser, never to a new Electron window.
@@ -409,14 +455,35 @@ function registerIpcHandlers(): void {
   });
 
   ipcMain.handle(IPC.PICK_CUSTOM_SOUND, async () => {
-    if (!mainWindow) return '';
-    const result = await dialog.showOpenDialog(mainWindow, {
-      title: 'Choose Alert Sound',
-      filters: [{ name: 'Audio Files', extensions: ['mp3', 'wav', 'ogg', 'flac'] }],
-      properties: ['openFile'],
-    });
-    if (result.canceled || result.filePaths.length === 0) return '';
-    return result.filePaths[0];
+    if (!mainWindow || mainWindow.isDestroyed()) {
+      console.warn('[Main] Custom sound: no main window, picker not opened');
+      return '';
+    }
+    // A modal dialog is parented to the window, so a minimized or background
+    // parent can leave the picker with nowhere visible to appear. Foreground
+    // the parent first, then log the outcome: chosen, cancelled, and failed
+    // are indistinguishable from the outside, which is what makes a broken
+    // picker look like a dead button.
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    if (!mainWindow.isVisible()) mainWindow.show();
+    mainWindow.focus();
+    console.log('[Main] Custom sound: opening picker');
+    try {
+      const result = await dialog.showOpenDialog(mainWindow, {
+        title: 'Choose Alert Sound',
+        filters: [{ name: 'Audio Files', extensions: ['mp3', 'wav', 'ogg', 'flac'] }],
+        properties: ['openFile'],
+      });
+      if (result.canceled || result.filePaths.length === 0) {
+        console.log('[Main] Custom sound: cancelled');
+        return '';
+      }
+      console.log(`[Main] Custom sound: chose ${result.filePaths[0]}`);
+      return result.filePaths[0];
+    } catch (err) {
+      console.error('[Main] Custom sound: picker failed', err);
+      throw err;
+    }
   });
 
   ipcMain.handle(IPC.OPEN_REGION_OVERLAY, () => {

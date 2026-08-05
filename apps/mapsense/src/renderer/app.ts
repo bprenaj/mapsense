@@ -163,7 +163,6 @@ function syncSettingsToUI(s: MapSenseSettings): void {
   ($('settingLaunchAtStartup') as HTMLInputElement).checked = s.launchAtStartup;
   updateRegionUI(s);
   $('modeLabel').textContent = s.trainingMode === 'paid' ? 'Pro Mode' : 'Free Mode';
-  $('trackingHint').textContent = s.trainingMode === 'free' ? 'Timer mode (Beam not used)' : '';
 }
 
 function syncTogglePills(modes: string[]): void {
@@ -528,7 +527,18 @@ function bindEvents(): void {
     btn.addEventListener('click', () => handleTogglePill(btn as HTMLElement));
   });
 
-  $('btnPickSound').addEventListener('click', async () => { const p = await api.pickCustomSound(); if (p) patchSetting({ customSoundPath: p }); });
+  // A rejected invoke inside an async click handler is an unhandled rejection:
+  // the click does nothing, and nothing anywhere says why. Catch it, log it
+  // (main mirrors renderer errors into main.log), and say so on screen.
+  $('btnPickSound').addEventListener('click', async () => {
+    try {
+      const p = await api.pickCustomSound();
+      if (p) await patchSetting({ customSoundPath: p });
+    } catch (err) {
+      console.error('[Renderer] Custom sound picker failed:', err);
+      $('customSoundLabel').textContent = 'Could not open the file picker';
+    }
+  });
   $('settingPreset').addEventListener('change', async (e) => {
     const key = (e.target as HTMLSelectElement).value;
     if (!key) return;

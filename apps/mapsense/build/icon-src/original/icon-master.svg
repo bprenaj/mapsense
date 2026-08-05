@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 64 64">
+      <defs>
+        <linearGradient id="cop-4a" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#2a1206"></stop>
+          <stop offset="0.1" stop-color="#5e2f12"></stop>
+          <stop offset="0.24" stop-color="#9c5a24"></stop>
+          <stop offset="0.42" stop-color="#d99c54"></stop>
+          <stop offset="0.5" stop-color="#ffe2ac"></stop>
+          <stop offset="0.56" stop-color="#f0bd76"></stop>
+          <stop offset="0.66" stop-color="#b06c2c"></stop>
+          <stop offset="0.8" stop-color="#61300f"></stop>
+          <stop offset="1" stop-color="#220e04"></stop>
+        </linearGradient>
+        <linearGradient id="copv-4a" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#000000" stop-opacity="0.35"></stop>
+          <stop offset="0.18" stop-color="#000000" stop-opacity="0"></stop>
+          <stop offset="0.75" stop-color="#000000" stop-opacity="0"></stop>
+          <stop offset="1" stop-color="#000000" stop-opacity="0.28"></stop>
+        </linearGradient>
+        <linearGradient id="lip-4a" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#3a1c09"></stop>
+          <stop offset="0.38" stop-color="#d99c54"></stop>
+          <stop offset="0.46" stop-color="#f2c887"></stop>
+          <stop offset="0.62" stop-color="#a05f24"></stop>
+          <stop offset="1" stop-color="#331708"></stop>
+        </linearGradient>
+        <radialGradient id="int-4a" cx="0.5" cy="0.4" r="0.7">
+          <stop offset="0" stop-color="#140b05"></stop>
+          <stop offset="0.7" stop-color="#2a180b"></stop>
+          <stop offset="1" stop-color="#503018"></stop>
+        </radialGradient>
+        <mask id="notch-4a">
+          <rect x="0" y="0" width="64" height="64" fill="#ffffff"></rect>
+        </mask>
+        <linearGradient id="hdl-4a" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#170d08"></stop>
+          <stop offset="0.32" stop-color="#3e2a1e"></stop>
+          <stop offset="0.45" stop-color="#5a4230"></stop>
+          <stop offset="0.6" stop-color="#332217"></stop>
+          <stop offset="1" stop-color="#0f0704"></stop>
+        </linearGradient>
+        <linearGradient id="col-4a" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#3c414a"></stop>
+          <stop offset="0.35" stop-color="#c8cfd9"></stop>
+          <stop offset="0.5" stop-color="#f2f6fa"></stop>
+          <stop offset="0.65" stop-color="#9aa2ad"></stop>
+          <stop offset="1" stop-color="#2e333b"></stop>
+        </linearGradient>
+        <radialGradient id="clap-4a" cx="0.38" cy="0.32" r="0.85">
+          <stop offset="0" stop-color="#f7cdb8"></stop>
+          <stop offset="0.35" stop-color="#a5705c"></stop>
+          <stop offset="0.75" stop-color="#5c3a2c"></stop>
+          <stop offset="1" stop-color="#301a10"></stop>
+        </radialGradient>
+        <radialGradient id="halo-4a" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0" stop-color="#00D4FF" stop-opacity="0.9"></stop>
+          <stop offset="0.5" stop-color="#00D4FF" stop-opacity="0.35"></stop>
+          <stop offset="1" stop-color="#00D4FF" stop-opacity="0"></stop>
+        </radialGradient>
+        <radialGradient id="bg-4a" cx="0.42" cy="0.55" r="0.8">
+          <stop offset="0" stop-color="#16336e"></stop>
+          <stop offset="1" stop-color="#080e24"></stop>
+        </radialGradient>
+        <filter id="glow-4a" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="1.2" result="b"></feGaussianBlur>
+          <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+        </filter>
+        <filter id="soft-4a" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="0.45"></feGaussianBlur>
+        </filter>
+        <filter id="blur1-4a" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="0.7"></feGaussianBlur>
+        </filter>
+        <clipPath id="clip-4a"><path d="M32 15 C26 15 23 21.5 22 30 C21.5 34.5 20.5 37 18.5 39.5 C16.5 41.7 15 43 14.5 45.5 L49.5 45.5 C49 43 47.5 41.7 45.5 39.5 C43.5 37 42.5 34.5 42 30 C41 21.5 38 15 32 15 Z"></path></clipPath>
+        <mask id="mask-4a">
+          <rect x="0" y="0" width="64" height="64" fill="#ffffff"></rect>
+          <path d="M32 15 C26 15 23 21.5 22 30 C21.5 34.5 20.5 37 18.5 39.5 C16.5 41.7 15 43 14.5 45.5 L49.5 45.5 C49 43 47.5 41.7 45.5 39.5 C43.5 37 42.5 34.5 42 30 C41 21.5 38 15 32 15 Z" fill="#000000"></path>
+          <ellipse cx="32" cy="45.5" rx="17.5" ry="3.4" fill="#000000"></ellipse>
+          <ellipse cx="32" cy="46" rx="14.8" ry="2.5" fill="#ffffff"></ellipse>
+        </mask>
+        <g id="tr-4a" stroke-linecap="butt" stroke-linejoin="round">
+          <path d="M20.5 27.8 Q22.5 26.1 24.5 25.5 L28.5 29 L36.5 29 L39.5 25.8 Q42 25.6 44 27.4" fill="none"></path>
+          <path d="M32.3 29 L32.3 33.6" fill="none"></path>
+          <path d="M18.5 36.8 Q32 30.2 45.5 36.8" fill="none"></path>
+        </g>
+        <clipPath id="mouth-4a"><ellipse cx="32" cy="46" rx="15.2" ry="2.9"></ellipse></clipPath>
+        <clipPath id="ballclip-4a"><ellipse cx="32" cy="46" rx="14.8" ry="2.5"></ellipse><rect x="12" y="46" width="40" height="14"></rect></clipPath>
+        
+      </defs>
+      <rect width="64" height="64" rx="14" fill="url(#bg-4a)"></rect>
+      <g id="bell-4a" transform="rotate(45 32 32)">
+          <rect x="28.3" y="2.8" width="7.4" height="10.5" rx="3.7" fill="url(#hdl-4a)"></rect>
+          <path d="M30 4.3 Q29.7 8 30.3 10.2 Q30.8 11.8 32 12.6 L33 12.5 Q32 10.8 31.7 9 Q31.5 6.5 31.9 4.3 Q30.9 3.4 30 4.3 Z" fill="#8a6a52" opacity="0.55" filter="url(#blur1-4a)"></path>
+          <path d="M34.3 5.5 Q34.6 8.5 34 10.8 Q33.6 12 32.8 12.6 L33.8 12.6 Q34.8 11.4 35.1 9.2 Q35.3 7 35 5.5 Z" fill="#8a6a52" opacity="0.3" filter="url(#blur1-4a)"></path>
+          <rect x="30.1" y="12.2" width="3.8" height="4.6" rx="1" fill="url(#col-4a)"></rect>
+          <g mask="url(#notch-4a)">
+          <path d="M32 15 C26 15 23 21.5 22 30 C21.5 34.5 20.5 37 18.5 39.5 C16.5 41.7 15 43 14.5 45.5 L49.5 45.5 C49 43 47.5 41.7 45.5 39.5 C43.5 37 42.5 34.5 42 30 C41 21.5 38 15 32 15 Z" fill="url(#cop-4a)"></path>
+          <path d="M32 15 C26 15 23 21.5 22 30 C21.5 34.5 20.5 37 18.5 39.5 C16.5 41.7 15 43 14.5 45.5 L49.5 45.5 C49 43 47.5 41.7 45.5 39.5 C43.5 37 42.5 34.5 42 30 C41 21.5 38 15 32 15 Z" fill="url(#copv-4a)"></path>
+          <g clip-path="url(#clip-4a)">
+            <path d="M43.5 20 Q45 28 46.5 34.5 Q47.6 38.6 49.3 41.8 L47.2 42.5 Q45.4 38.6 44.4 34 Q43.2 27.5 42.6 21.5 Z" fill="#ffce8f" opacity="0.18" filter="url(#blur1-4a)"></path>
+            <path d="M20.5 22 Q21.5 30 20.8 35.5" stroke="#000000" stroke-width="2.5" opacity="0.25" fill="none" filter="url(#blur1-4a)"></path>
+            <g transform="translate(0.1 0.18)" opacity="0.6" stroke-linecap="butt" stroke-linejoin="round">
+              <path d="M20.5 27.8 Q22.5 26.1 24.5 25.5 L28.5 29 L36.5 29 L39.5 25.8 Q42 25.6 44 27.4" fill="none" stroke="#2a1208" stroke-width="1.9"></path>
+              <path d="M32.3 29 L32.3 33.6" fill="none" stroke="#2a1208" stroke-width="1.9"></path>
+              <path d="M18.5 36.8 Q32 30.2 45.5 36.8" fill="none" stroke="#2a1208" stroke-width="1.9"></path>
+            </g>
+            <g transform="translate(-0.2 -0.35)" stroke-linecap="butt" stroke-linejoin="round">
+              <path d="M20.5 27.8 Q22.5 26.1 24.5 25.5 L28.5 29 L36.5 29 L39.5 25.8 Q42 25.6 44 27.4" fill="none" stroke="#2a1208" stroke-width="2.2"></path>
+              <path d="M32.3 29 L32.3 33.6" fill="none" stroke="#2a1208" stroke-width="2.2"></path>
+              <path d="M18.5 36.8 Q32 30.2 45.5 36.8" fill="none" stroke="#2a1208" stroke-width="2.2"></path>
+            </g>
+            <g filter="url(#glow-4a)" stroke-linecap="butt" stroke-linejoin="round">
+              <path d="M20.5 27.8 Q22.5 26.1 24.5 25.5 L28.5 29 L36.5 29 L39.5 25.8 Q42 25.6 44 27.4" fill="none" stroke="#00D4FF" stroke-width="1.6"></path>
+              <path d="M32.3 29 L32.3 33.6" fill="none" stroke="#00D4FF" stroke-width="1.6"></path>
+              <path d="M18.5 36.8 Q32 30.2 45.5 36.8" fill="none" stroke="#00D4FF" stroke-width="1.6"></path>
+            </g>
+            <g opacity="0.45" filter="url(#soft-4a)" stroke-linecap="butt" stroke-linejoin="round">
+              <path d="M20.5 27.8 Q22.5 26.1 24.5 25.5 L28.5 29 L36.5 29 L39.5 25.8 Q42 25.6 44 27.4" fill="none" stroke="#ffffff" stroke-width="0.8"></path>
+              <path d="M32.3 29 L32.3 33.6" fill="none" stroke="#ffffff" stroke-width="0.8"></path>
+              <path d="M18.5 36.8 Q32 30.2 45.5 36.8" fill="none" stroke="#ffffff" stroke-width="0.8"></path>
+            </g>
+          </g>
+          </g>
+          <ellipse cx="32" cy="45.5" rx="17.5" ry="3.4" fill="url(#lip-4a)"></ellipse>
+          <ellipse cx="32" cy="46" rx="14.8" ry="2.5" fill="url(#int-4a)"></ellipse>
+          <circle cx="32" cy="47.8" r="7.5" fill="url(#halo-4a)" mask="url(#mask-4a)"></circle>
+          <g clip-path="url(#ballclip-4a)">
+            <circle cx="32" cy="47.8" r="4.4" fill="url(#clap-4a)"></circle>
+            <circle cx="30.5" cy="46.4" r="1.5" fill="#ffe9dc" opacity="0.95" filter="url(#blur1-4a)"></circle>
+          </g>
+        </g>
+    </svg>

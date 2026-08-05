@@ -28,10 +28,19 @@ if (existsSync(assetDir)) {
   cpSync(assetDir, resolve(dest, 'assets'), { recursive: true });
 }
 
+// The sidebar mark is the app icon itself (build/icon-src is the single source
+// of truth, per the Brand Tokens Rule), not a second copy of the artwork.
+const bellSrc = resolve(root, 'build', 'icon-src', 'icon-256.png');
+if (existsSync(bellSrc)) {
+  cpSync(bellSrc, resolve(dest, 'assets', 'bell.png'));
+} else {
+  console.warn('[copy-static] WARNING: build/icon-src/icon-256.png missing');
+}
+
 const imageMap = {
   "MapSense's Bell - Main Image.jpg": 'mapsense-main.jpg',
-  // Pre-cropped: character + circuit art only, no baked-in store text
-  'mapsense-header-cropped.jpg': 'mapsense-header.jpg',
+  // The Coach hero reads src/renderer/assets/mapsense-hero.png instead, which
+  // scripts/make-hero-art.js derives from mapsense-header-cropped.jpg.
 };
 
 for (const [from, to] of Object.entries(imageMap)) {

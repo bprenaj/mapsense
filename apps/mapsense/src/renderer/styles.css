@@ -46,10 +46,9 @@ html, body {
   display: flex; flex-direction: column; align-items: center; gap: 6px;
 }
 .nav-brand { margin-bottom: 8px; }
-.nav-avatar {
-  width: 52px; height: 52px; border-radius: 14px; object-fit: cover;
-  border: 1px solid var(--line);
-}
+/* The mark is the bell itself, no plate: build/icon-src/icon-256.png is
+   transparent, so it sits directly on the sidebar. */
+.nav-avatar { width: 46px; height: 46px; object-fit: contain; display: block; }
 .nav-item {
   width: 62px; min-height: 54px; border-radius: 12px; border: 1px solid transparent;
   background: transparent; color: var(--text-2); cursor: pointer;
@@ -67,7 +66,14 @@ html, body {
 .nav-spacer { flex: 1; }
 
 /* ─── Main area ─── */
-.main-area { display: grid; grid-template-rows: 52px minmax(0,1fr); min-height: 0; }
+/* Rows are placed explicitly, not left to auto-flow: the update banner is a
+   third child, so without this it lands in the content row and takes its 1fr,
+   pushing the page into an auto-sized row that overflows the window. Hidden,
+   its row collapses to zero. */
+.main-area { display: grid; grid-template-rows: 52px auto minmax(0,1fr); min-height: 0; }
+.main-area > .title-bar { grid-row: 1; }
+.main-area > .update-banner { grid-row: 2; }
+.main-area > .content { grid-row: 3; }
 
 .title-bar {
   border-bottom: 1px solid var(--line); padding: 0 14px;
@@ -103,7 +109,7 @@ html, body {
 .win-btn--close:hover { background: var(--danger); color: #fff; }
 
 /* ─── Content ─── */
-.content { overflow-y: auto; overflow-x: hidden; padding: 20px 24px; min-height: 0; }
+.content { overflow-y: auto; overflow-x: hidden; padding: 14px 24px; min-height: 0; }
 .page { display: none; }
 .page--active { display: block; }
 .page-title { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 18px; }
@@ -111,50 +117,54 @@ html, body {
 /* ─── Coach: Region gate ─── */
 .region-gate {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 14px; min-height: 340px; text-align: center;
+  gap: 12px; min-height: 250px; text-align: center;
 }
-.gate-img { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(0,212,255,0.2); }
+.gate-img { width: 112px; height: 112px; border-radius: 50%; object-fit: cover; border: 3px solid rgba(0,212,255,0.2); }
 .region-gate h2 { font-family: 'Chakra Petch', sans-serif; font-size: 22px; color: var(--accent); }
 .region-gate p { color: var(--text-1); max-width: 380px; line-height: 1.6; }
 
 /* ─── MAS card ─── */
 .mas-card {
   display: flex; align-items: center; gap: 20px;
-  padding: 18px 22px; background: var(--surface); border-radius: var(--radius); margin-bottom: 16px;
+  padding: 12px 20px; background: var(--surface); border-radius: var(--radius); margin-bottom: 8px;
   cursor: help;
 }
 .mas-score-wrap { text-align: center; min-width: 90px; }
-.mas-value { font-family: 'Chakra Petch', sans-serif; font-size: 48px; font-weight: 800; line-height: 1; color: var(--gold); }
+.mas-value { font-family: 'Chakra Petch', sans-serif; font-size: 40px; font-weight: 800; line-height: 1; color: var(--gold); }
 .mas-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: 2px; text-transform: uppercase; }
 .mas-info { flex: 1; }
-.mas-sublabel { font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
 .mas-bar { height: 6px; background: var(--bg-1); border-radius: 3px; overflow: hidden; }
 .mas-bar__fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 3px; transition: width 0.3s; }
 
 /* ─── Training controls ─── */
-.training-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.training-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
 .timer { font-size: 16px; color: var(--warning); font-weight: 700; font-variant-numeric: tabular-nums; }
 .timer.alert-active { color: var(--danger); animation: blink 0.5s infinite; }
-.training-hint { font-size: 12px; color: var(--text-2); font-style: italic; }
 
 /* ─── Coach hero header ─── */
 .coach-hero {
-  position: relative; height: 108px; border-radius: var(--radius);
-  overflow: hidden; margin-bottom: 16px; background: var(--surface);
+  position: relative; height: 176px; border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 12px;
+  display: flex; align-items: center;
+  /* The artwork dissolves leftward into this, so it has to read as the app's
+     own blue rather than as a panel the art is pasted onto. */
+  background: linear-gradient(90deg, var(--surface) 0%, #101d33 55%, #0c1830 100%);
 }
 .coach-hero__img {
-  /* Natural-aspect crop, right-anchored: shows the scientist's eyes, raised
-     eyebrows, and the bell at the far right of the strip; the game-map half
-     of the artwork (to his right in the source) is pushed past the edge.
-     Offsets derived from the 761x420 source at 340px display height. */
-  position: absolute; top: -50px; right: -300px; left: auto;
-  height: 340px; width: auto;
+  /* Full height, no vertical crop: the bell, the hand and the whole of Pavlov
+     are in frame. The overhang pushes the game-map third of the artwork past
+     the right edge. The left-hand fade is baked into the asset by
+     scripts/make-hero-art.js, which is why there is no mask here. */
+  position: absolute; top: 50%; right: -130px; left: auto;
+  height: 196px; width: auto; transform: translateY(-50%);
 }
 .coach-hero__scrim {
+  /* Only enough to keep the headline off the art's brightest tones; it has to
+     be spent before the artwork starts, or it dims the character. */
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(8,14,36,0.96) 0%, rgba(8,14,36,0.72) 42%, rgba(8,14,36,0.12) 100%);
+  background: linear-gradient(90deg, rgba(8,14,36,0.55) 0%, rgba(8,14,36,0.18) 30%, rgba(8,14,36,0) 52%);
 }
-.coach-hero__text { position: relative; padding: 24px 22px; }
+.coach-hero__text { position: relative; padding: 0 22px; }
 .coach-hero__title {
   font-family: 'Chakra Petch', sans-serif; font-size: 22px; font-weight: 700;
   color: var(--text-0); letter-spacing: 0.5px;
@@ -162,26 +172,35 @@ html, body {
 .coach-hero__sub { font-size: 12px; color: var(--text-1); margin-top: 4px; }
 
 /* ─── Metrics: primary KPI cards + secondary chips ─── */
-.metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 10px; }
-.metrics-chips { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; margin-bottom: 16px; }
+.metrics-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 6px; }
+/* Secondary metrics read as a quiet strip under the four that matter, not as
+   five more cards competing with them for the same attention. */
+.metrics-chips {
+  display: flex; flex-wrap: wrap; align-items: baseline;
+  gap: 2px 20px; padding: 2px 4px; margin-bottom: 8px;
+}
 .mc {
-  padding: 12px 14px; background: var(--surface); border-radius: var(--radius);
+  padding: 10px 12px; background: var(--surface); border-radius: var(--radius);
   display: flex; flex-direction: column; cursor: help;
 }
 .mc--kpi { border: 1px solid transparent; }
 .mc--kpi:hover { border-color: var(--line); }
-.mc--chip { padding: 8px 12px; background: rgba(18,31,53,0.6); }
-.mc--chip .metric-value { font-size: 16px; }
-.mc-label { font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+.mc--chip {
+  flex-direction: row; align-items: baseline; gap: 6px;
+  padding: 0; background: none; border-radius: 0;
+}
+.mc--chip .mc-label { margin-bottom: 0; }
+.mc--chip .metric-value { font-size: 14px; }
+.mc-label { font-size: 11px; color: var(--text-2); margin-bottom: 1px; }
 .mc-value-row { display: flex; align-items: baseline; gap: 4px; }
-.metric-value { font-family: 'Chakra Petch', sans-serif; font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.metric-value { font-family: 'Chakra Petch', sans-serif; font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
 .mc-unit { font-size: 10px; color: var(--text-2); }
 .metric-value--good { color: var(--good); }
 .metric-value--warn { color: var(--warn); }
 .metric-value--bad { color: var(--bad); }
 
 /* Benchmark bar: where you are vs the target band */
-.kpi-bench { margin-top: 8px; }
+.kpi-bench { margin-top: 6px; }
 .kpi-bench__track {
   position: relative; height: 5px; border-radius: 3px; background: var(--bg-1); overflow: hidden;
 }
@@ -193,7 +212,7 @@ html, body {
   position: relative; height: 100%; width: 0%;
   background: var(--accent); border-radius: 3px; transition: width 0.3s;
 }
-.kpi-bench__label { display: block; font-size: 9px; color: var(--text-2); margin-top: 4px; }
+.kpi-bench__label { display: block; font-size: 9px; color: var(--text-2); margin-top: 2px; }
 
 /* ─── MAS delta chip ─── */
 .mas-delta {
@@ -207,19 +226,19 @@ html, body {
 /* ─── Info bar ─── */
 .info-bar {
   display: flex; align-items: center; gap: 12px;
-  padding: 8px 14px; background: var(--surface); border-radius: var(--radius); font-size: 13px; color: var(--text-2);
+  padding: 5px 12px; background: var(--surface); border-radius: var(--radius); font-size: 12px; color: var(--text-2);
 }
 
 /* ─── Ad banner ─── */
 .ad-banner {
-  margin-top: 16px; padding: 12px 18px;
+  margin-bottom: 12px; padding: 4px 14px;
   background: var(--surface); border-radius: var(--radius);
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 .ad-unit {
   display: flex; align-items: center; gap: 10px;
   min-height: 60px; flex: 1;
-  background: rgba(0,0,0,0.2); border-radius: 6px; padding: 8px 14px;
+  background: rgba(0,0,0,0.2); border-radius: 6px; padding: 0 12px;
 }
 .ad-tag {
   font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--text-2);
@@ -253,7 +272,7 @@ html, body {
 .btn--ghost { background: transparent; color: var(--text-2); border: 1px solid var(--line); }
 .btn--ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn--sm { padding: 5px 12px; font-size: 12px; }
-.btn--lg { padding: 12px 28px; font-size: 15px; }
+.btn--lg { padding: 10px 26px; font-size: 14px; }
 .btn-link {
   background: none; border: none; color: var(--accent); font-size: 12px; font-weight: 600;
   cursor: pointer; text-decoration: underline; padding: 0; font-family: inherit;

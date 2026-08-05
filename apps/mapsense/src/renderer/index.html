@@ -11,7 +11,7 @@
   <div class="app-shell">
     <aside class="side-nav">
       <div class="nav-brand">
-        <img src="assets/mapsense-main.jpg" alt="MapSense" class="nav-avatar">
+        <img src="assets/bell.png" alt="MapSense" class="nav-avatar">
       </div>
       <button class="nav-item nav-active" data-page="coach" title="Coach">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -61,90 +61,11 @@
         <!-- ═══════ COACH PAGE ═══════ -->
         <section id="pageCoach" class="page page--active">
           <div id="coachHero" class="coach-hero">
-            <img src="assets/mapsense-header.jpg" alt="" class="coach-hero__img">
+            <img src="assets/mapsense-hero.png" alt="" class="coach-hero__img">
             <div class="coach-hero__scrim"></div>
             <div class="coach-hero__text">
-              <h2 class="coach-hero__title">Minimap awareness coach</h2>
-              <p class="coach-hero__sub">Train the reflex. Check the map. Win more.</p>
-            </div>
-          </div>
-
-          <div id="regionGate" class="region-gate">
-            <img src="assets/mapsense-main.jpg" alt="MapSense" class="gate-img">
-            <h2>You never saw them coming. Again.</h2>
-            <p>Mark your minimap once. MapSense pings you whenever you go too long without checking it.</p>
-            <button id="btnSelectRegionGate" class="btn btn--accent btn--lg">Mark Your Minimap</button>
-          </div>
-
-          <div id="coachContent" class="coach-content" style="display:none;">
-            <div class="mas-card" title="Your overall minimap awareness rating from 0 to 100.&#10;&#10;Score 80+ = excellent. Score 50-80 = good. Below 50 = keep practicing.&#10;&#10;MAS is a weighted blend of check rate (40%), response time (25%), processing speed (20%), and consistency (15%).">
-              <div class="mas-score-wrap">
-                <span id="masValue" class="mas-value">0</span>
-                <span class="mas-label">MAS</span>
-              </div>
-              <div class="mas-info">
-                <p class="mas-sublabel">Map Awareness Score</p>
-                <div class="mas-bar"><div id="masBarFill" class="mas-bar__fill"></div></div>
-              </div>
-              <span id="masDelta" class="mas-delta" style="display:none;"></span>
-            </div>
-
-            <div class="training-row">
-              <button id="btnStartTraining" class="btn btn--accent btn--lg">Start Training</button>
-              <button id="btnStopTraining" class="btn btn--danger btn--lg" style="display:none;">Stop Training</button>
-              <button id="btnManualGlance" class="btn btn--outline" style="display:none;" title="Tell MapSense you just checked the map.&#10;In Free mode, this replaces eye tracking.">I Checked the Map</button>
-              <div id="timerDisplay" class="timer" style="display:none;">
-                <span id="timerValue">0.0</span>s since last glance
-              </div>
-              <span id="trackingHint" class="tracking-hint"></span>
-            </div>
-
-            <div id="metricsGrid" class="metrics-grid">
-              <div class="mc mc--kpi" title="How many times per minute you check the minimap.&#10;This is the single strongest predictor of map awareness.&#10;Pro players average 6-8 glances per minute.">
-                <span class="mc-label">Check Rate</span>
-                <div class="mc-value-row"><span id="metricRate" class="metric-value">0.0</span><span class="mc-unit">/min</span></div>
-                <div class="kpi-bench">
-                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:60%; width:20%;"></div><div id="benchRate" class="kpi-bench__fill"></div></div>
-                  <span class="kpi-bench__label">Pro: 6-8/min</span>
-                </div>
-              </div>
-              <div class="mc mc--kpi" title="Average number of seconds between consecutive map glances.&#10;Lower is better. If this exceeds your timeout, you trigger alerts.">
-                <span class="mc-label">Avg Response</span>
-                <div class="mc-value-row"><span id="metricAvgGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div>
-                <div class="kpi-bench">
-                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:0%; width:40%;"></div><div id="benchAvgGap" class="kpi-bench__fill"></div></div>
-                  <span class="kpi-bench__label">Target: under 8s</span>
-                </div>
-              </div>
-              <div class="mc mc--kpi" title="Percentage of the session your eyes spent on the minimap.&#10;Healthy range is 8-15%. Too low = ignoring. Too high = staring.">
-                <span class="mc-label">Map Attention</span>
-                <div class="mc-value-row"><span id="metricMapTime" class="metric-value">0.0</span><span class="mc-unit">%</span></div>
-                <div class="kpi-bench">
-                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:26.7%; width:23.3%;"></div><div id="benchMapTime" class="kpi-bench__fill"></div></div>
-                  <span class="kpi-bench__label">Healthy: 8-15%</span>
-                </div>
-              </div>
-              <div class="mc mc--kpi" title="Average duration of each minimap glance in milliseconds.&#10;Shorter glances = faster info extraction.&#10;Pro players extract map info in very brief glances.">
-                <span class="mc-label">Glance Speed</span>
-                <div class="mc-value-row"><span id="metricProcSpeed" class="metric-value">0</span><span class="mc-unit">ms</span></div>
-                <div class="kpi-bench">
-                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:0%; width:33.3%;"></div><div id="benchProcSpeed" class="kpi-bench__fill"></div></div>
-                  <span class="kpi-bench__label">Pro: under 500ms</span>
-                </div>
-              </div>
-            </div>
-
-            <div id="metricsChips" class="metrics-chips">
-              <div class="mc mc--chip" title="Total time elapsed since you pressed Start Training."><span class="mc-label">Duration</span><div class="mc-value-row"><span id="metricDuration" class="metric-value">0</span><span class="mc-unit">s</span></div></div>
-              <div class="mc mc--chip" title="Total number of times your eyes entered the minimap region.&#10;Each gaze entry counts as one glance."><span class="mc-label">Glances</span><div class="mc-value-row"><span id="metricGlances" class="metric-value">0</span><span class="mc-unit"></span></div></div>
-              <div class="mc mc--chip" title="The single longest period you went without checking the map.&#10;This is your worst tunnel vision moment. Keep this low."><span class="mc-label">Longest Blind</span><div class="mc-value-row"><span id="metricLongestGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
-              <div class="mc mc--chip" title="Number of times the alert fired because you exceeded the timeout.&#10;Fewer alerts = better awareness."><span class="mc-label">Tunnel Alerts</span><div class="mc-value-row"><span id="metricAlerts" class="metric-value">0</span><span class="mc-unit"></span></div></div>
-              <div class="mc mc--chip" title="The longest period where you checked the map frequently enough&#10;that the alert never fired. Longer = more consistent."><span class="mc-label">Best Streak</span><div class="mc-value-row"><span id="metricAlertFree" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
-            </div>
-
-            <div class="info-bar">
-              <span id="regionLabel">No region</span>
-              <button id="btnChangeRegion" class="btn btn--ghost btn--sm">Change Region</button>
+              <h2 class="coach-hero__title">MapSense</h2>
+              <p class="coach-hero__sub">Your Pavlovian minimap awareness coach.</p>
             </div>
           </div>
 
@@ -163,6 +84,83 @@
             <div class="ad-cta">
               <span class="ad-cta-text">Remove ads and unlock gaze tracking</span>
               <button id="btnUpgradePro" class="btn btn--accent btn--sm">Go Pro</button>
+            </div>
+          </div>
+
+          <div id="regionGate" class="region-gate">
+            <img src="assets/mapsense-main.jpg" alt="MapSense" class="gate-img">
+            <h2>You never saw them coming. Again.</h2>
+            <p>Mark your minimap once. MapSense pings you whenever you go too long without checking it.</p>
+            <button id="btnSelectRegionGate" class="btn btn--accent btn--lg">Mark Your Minimap</button>
+          </div>
+
+          <div id="coachContent" class="coach-content" style="display:none;">
+            <div class="mas-card" title="Your overall minimap awareness rating from 0 to 100.&#10;&#10;Score 80+ = excellent. Score 50-80 = good. Below 50 = keep practicing.&#10;&#10;MAS is a weighted blend of check rate (40%), response time (25%), processing speed (20%), and consistency (15%).">
+              <div class="mas-score-wrap">
+                <span id="masValue" class="mas-value">0</span>
+                <span class="mas-label">MAS</span>
+              </div>
+              <div class="mas-info">
+                <div class="mas-bar"><div id="masBarFill" class="mas-bar__fill"></div></div>
+              </div>
+              <span id="masDelta" class="mas-delta" style="display:none;"></span>
+            </div>
+
+            <div class="training-row">
+              <button id="btnStartTraining" class="btn btn--accent btn--lg">Start Training</button>
+              <button id="btnStopTraining" class="btn btn--danger btn--lg" style="display:none;">Stop Training</button>
+              <button id="btnManualGlance" class="btn btn--outline" style="display:none;" title="Tell MapSense you just checked the map.&#10;In Free mode, this replaces eye tracking.">I Checked the Map</button>
+              <div id="timerDisplay" class="timer" style="display:none;">
+                <span id="timerValue">0.0</span>s since last glance
+              </div>
+            </div>
+
+            <div id="metricsGrid" class="metrics-grid">
+              <div class="mc mc--kpi" title="How many times per minute you check the minimap.&#10;This is the single strongest predictor of map awareness.&#10;Pro players average 6-8 glances per minute.">
+                <span class="mc-label">Check rate</span>
+                <div class="mc-value-row"><span id="metricRate" class="metric-value">0.0</span><span class="mc-unit">/min</span></div>
+                <div class="kpi-bench">
+                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:60%; width:20%;"></div><div id="benchRate" class="kpi-bench__fill"></div></div>
+                  <span class="kpi-bench__label">6-8/min</span>
+                </div>
+              </div>
+              <div class="mc mc--kpi" title="Average number of seconds between consecutive map glances.&#10;Lower is better. If this exceeds your timeout, you trigger alerts.">
+                <span class="mc-label">Avg response</span>
+                <div class="mc-value-row"><span id="metricAvgGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div>
+                <div class="kpi-bench">
+                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:0%; width:40%;"></div><div id="benchAvgGap" class="kpi-bench__fill"></div></div>
+                  <span class="kpi-bench__label">under 8s</span>
+                </div>
+              </div>
+              <div class="mc mc--kpi" title="Percentage of the session your eyes spent on the minimap.&#10;Healthy range is 8-15%. Too low = ignoring. Too high = staring.">
+                <span class="mc-label">Map attention</span>
+                <div class="mc-value-row"><span id="metricMapTime" class="metric-value">0.0</span><span class="mc-unit">%</span></div>
+                <div class="kpi-bench">
+                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:26.7%; width:23.3%;"></div><div id="benchMapTime" class="kpi-bench__fill"></div></div>
+                  <span class="kpi-bench__label">8-15%</span>
+                </div>
+              </div>
+              <div class="mc mc--kpi" title="Average duration of each minimap glance in milliseconds.&#10;Shorter glances = faster info extraction.&#10;Pro players extract map info in very brief glances.">
+                <span class="mc-label">Glance speed</span>
+                <div class="mc-value-row"><span id="metricProcSpeed" class="metric-value">0</span><span class="mc-unit">ms</span></div>
+                <div class="kpi-bench">
+                  <div class="kpi-bench__track"><div class="kpi-bench__target" style="left:0%; width:33.3%;"></div><div id="benchProcSpeed" class="kpi-bench__fill"></div></div>
+                  <span class="kpi-bench__label">under 500ms</span>
+                </div>
+              </div>
+            </div>
+
+            <div id="metricsChips" class="metrics-chips">
+              <div class="mc mc--chip" title="Total time elapsed since you pressed Start Training."><span class="mc-label">Duration</span><div class="mc-value-row"><span id="metricDuration" class="metric-value">0</span><span class="mc-unit">s</span></div></div>
+              <div class="mc mc--chip" title="Total number of times your eyes entered the minimap region.&#10;Each gaze entry counts as one glance."><span class="mc-label">Glances</span><div class="mc-value-row"><span id="metricGlances" class="metric-value">0</span><span class="mc-unit"></span></div></div>
+              <div class="mc mc--chip" title="The single longest period you went without checking the map.&#10;This is your worst tunnel vision moment. Keep this low."><span class="mc-label">Longest blind</span><div class="mc-value-row"><span id="metricLongestGap" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
+              <div class="mc mc--chip" title="Number of times the alert fired because you exceeded the timeout.&#10;Fewer alerts = better awareness."><span class="mc-label">Tunnel alerts</span><div class="mc-value-row"><span id="metricAlerts" class="metric-value">0</span><span class="mc-unit"></span></div></div>
+              <div class="mc mc--chip" title="The longest period where you checked the map frequently enough&#10;that the alert never fired. Longer = more consistent."><span class="mc-label">Best streak</span><div class="mc-value-row"><span id="metricAlertFree" class="metric-value">0.0</span><span class="mc-unit">s</span></div></div>
+            </div>
+
+            <div class="info-bar">
+              <span id="regionLabel">No region</span>
+              <button id="btnChangeRegion" class="btn btn--ghost btn--sm">Change Region</button>
             </div>
           </div>
         </section>

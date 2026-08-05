@@ -1,7 +1,7 @@
 /**
- * Generates all MapSense icons at BUILD time from the designed source PNGs
- * in build/icon-src/ (the copper bell on the navy glow; see
- * build/icon-src/BRAND-NOTE.md for the token values):
+ * Generates all MapSense icons at BUILD time from build/icon-src/icon-*.png
+ * (the bell alone on transparency, produced by scripts/render-mark.js from the
+ * designer's master SVG; see build/icon-src/BRAND-NOTE.md):
  *
  *   - build/icon.ico              exe / installer / shortcuts / Apps list
  *   - build/tray/tray-*.png       tray icons with the status dot baked in
@@ -25,6 +25,12 @@ const SRC = path.join(ROOT, 'build', 'icon-src');
 const TRAY_DIR = path.join(ROOT, 'build', 'tray');
 const ICO_SIZES = [16, 32, 48, 256];
 const TRAY_SIZE = 32;
+// The bell is transparent-backed and fills its own square, so it is drawn
+// slightly inset and top-left anchored to leave the bottom-right corner for the
+// status dot. Without the inset the dot lands on the middle of the bell's skirt.
+const TRAY_BELL = 26;
+const DOT_R = 6;
+const DOT_C = TRAY_SIZE - DOT_R - 1;
 
 // Status dot colors, matching the app's live tokens (styles.css): success,
 // warning, and a clearly visible idle grey (Tray App Standard: idle must
@@ -79,7 +85,7 @@ function buildIco() {
 /** Compose base icon + status dot on a canvas inside a hidden window. */
 async function buildTrayIcons() {
   const win = new BrowserWindow({ show: false, webPreferences: { offscreen: true } });
-  const base64 = fs.readFileSync(path.join(SRC, `icon-${TRAY_SIZE}.png`)).toString('base64');
+  const base64 = fs.readFileSync(path.join(SRC, 'icon-48.png')).toString('base64');
   await win.loadURL('data:text/html,<html><body></body></html>');
 
   fs.mkdirSync(TRAY_DIR, { recursive: true });
@@ -91,10 +97,10 @@ async function buildTrayIcons() {
           const c = document.createElement('canvas');
           c.width = ${TRAY_SIZE}; c.height = ${TRAY_SIZE};
           const ctx = c.getContext('2d');
-          ctx.drawImage(img, 0, 0, ${TRAY_SIZE}, ${TRAY_SIZE});
+          ctx.drawImage(img, 0, 0, ${TRAY_BELL}, ${TRAY_BELL});
           // Status dot bottom-right, dark outline for contrast on any tray.
           ctx.beginPath();
-          ctx.arc(${TRAY_SIZE - 8}, ${TRAY_SIZE - 8}, 7, 0, Math.PI * 2);
+          ctx.arc(${DOT_C}, ${DOT_C}, ${DOT_R}, 0, Math.PI * 2);
           ctx.fillStyle = '${color}';
           ctx.fill();
           ctx.lineWidth = 2;
