@@ -16,6 +16,7 @@ const staticFiles = [
   'alert-overlay.html',
   'region-overlay.html',
   'update-flyout.html',
+  'tray-panel.html',
 ];
 
 for (const f of staticFiles) {

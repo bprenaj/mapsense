@@ -222,6 +222,42 @@ describe('Smoke Tests', () => {
     expect(copyStatic).toContain('update-flyout.html');
   });
 
+  it('the tray opens a styled quick panel, not a native context menu', () => {
+    // Tray App Standard: right-click gets the app's own panel, and the tray
+    // must work without any context menu at all.
+    const tray = fs.readFileSync(path.join(ROOT, 'src', 'main', 'services', 'tray.ts'), 'utf-8');
+    expect(tray).toContain("this.tray.on('right-click'");
+    expect(tray).not.toContain('setContextMenu');
+    expect(tray).not.toContain('Menu.buildFromTemplate');
+
+    const main = fs.readFileSync(path.join(ROOT, 'src', 'main', 'index.ts'), 'utf-8');
+    // Created hidden at startup, so the first summon opens at the right size.
+    expect(main).toContain('trayPanelWindow = createTrayPanel();');
+    // Blur and Escape both close it; a panel you cannot dismiss is a trap.
+    expect(main).toMatch(/win\.on\('blur', \(\) => win\.hide\(\)\)/);
+    // The renderer measures itself; a hardcoded height fits one machine only.
+    expect(main).toContain('IPC.PANEL_HEIGHT');
+    // Quit goes through app.quit() so cleanup and install-on-quit still run.
+    expect(main).toMatch(/case 'quit':[\s\S]{0,220}app\.quit\(\);/);
+
+    const panel = fs.readFileSync(path.join(ROOT, 'src', 'renderer', 'trayPanel.ts'), 'utf-8');
+    expect(panel).toContain("e.key === 'Escape'");
+    // A dev run has no updater, so that row is hidden rather than dead.
+    expect(panel).toMatch(/updateRow\.hidden = !state\.packaged;/);
+
+    const copyStatic = fs.readFileSync(path.join(ROOT, 'scripts', 'copy-static.mjs'), 'utf-8');
+    expect(copyStatic).toContain('tray-panel.html');
+  });
+
+  it('one function owns start/stop training, and every input delegates to it', () => {
+    // The hotkey used to carry its own copy of the toggle; adding the tray
+    // panel as a third input is exactly how those drift apart.
+    const main = fs.readFileSync(path.join(ROOT, 'src', 'main', 'index.ts'), 'utf-8');
+    expect(main).toContain('function toggleTraining(): void');
+    expect(main).toContain('globalShortcut.register(settings.hotkey, toggleTraining);');
+    expect(main).toMatch(/case 'toggleTraining':\s*\n\s*toggleTraining\(\);/);
+  });
+
   it('renderer console warnings and errors reach the app log', () => {
     // Electron's file logger only wraps MAIN-process console, so without this
     // forward a renderer-side failure leaves no trace in main.log at all.

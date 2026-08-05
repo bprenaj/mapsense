@@ -341,6 +341,8 @@ function createRegionOverlay(): Promise<MinimapRect | null> {
  * covers the visible case). Guarded on the staged VERSION so 4h re-checks
  * of the same download never re-pop it (Tray App Standard timer hygiene).
  */
+const FEEDBACK_URL = 'https://mapsense.featurebase.app';
+const DISCORD_URL = 'https://discord.gg/khk2dq8Bj3';
 const FLYOUT_W = 356;
 const FLYOUT_H = 128;
 
@@ -388,6 +390,113 @@ function hideUpdateFlyout(): void {
   if (updateFlyoutWindow && !updateFlyoutWindow.isDestroyed()) {
     updateFlyoutWindow.hide();
   }
+}
+
+// ── Tray quick panel ────────────────────────────────────────────────────────
+// Right-click on the tray opens this instead of a native context menu, so the
+// tray carries the app's live toggles and status in the app's own brand
+// (Tray App Standard). Created hidden at startup so the first summon opens at
+// the right size rather than resizing in front of the user.
+const PANEL_W = 306;
+const PANEL_H_FALLBACK = 372;
+let trayPanelWindow: BrowserWindow | null = null;
+let trayPanelHeight = PANEL_H_FALLBACK;
+
+function panelState() {
+  return {
+    training: sessionEngine.isRunning(),
+    beamStatus: beamBridge.getStatus(),
+    updater: updater.getState(),
+    packaged: app.isPackaged,
+  };
+}
+
+function pushPanelState(): void {
+  if (trayPanelWindow && !trayPanelWindow.isDestroyed()) {
+    trayPanelWindow.webContents.send(IPC.PANEL_STATE, panelState());
+  }
+}
+
+function createTrayPanel(): BrowserWindow {
+  const win = new BrowserWindow({
+    width: PANEL_W,
+    height: PANEL_H_FALLBACK,
+    frame: false,
+    transparent: true,
+    resizable: false,
+    movable: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    show: false,
+    webPreferences: {
+      preload: getOverlayPreloadPath(),
+      contextIsolation: true,
+      nodeIntegration: false,
+      // Chromium may treat a transparent unfocusable window as background and
+      // delay its work by seconds; the panel must be instant.
+      backgroundThrottling: false,
+    },
+  });
+  win.loadFile(getRendererPath('tray-panel.html'));
+  win.webContents.once('did-finish-load', () => {
+    win.webContents.send(IPC.PANEL_STATE, panelState());
+  });
+  forwardRendererConsole(win, 'TrayPanel');
+  win.on('blur', () => win.hide());
+  // A dead renderer inside a transparent window looks exactly like the tray
+  // ignoring clicks, so heal it rather than leaving an invisible husk.
+  win.webContents.on('render-process-gone', (_e, details) => {
+    console.error('[TrayPanel] Renderer gone:', details.reason);
+    if (details.reason !== 'clean-exit') win.webContents.reload();
+  });
+  win.on('closed', () => { trayPanelWindow = null; });
+  return win;
+}
+
+function showTrayPanel(): void {
+  if (!trayPanelWindow || trayPanelWindow.isDestroyed()) {
+    trayPanelWindow = createTrayPanel();
+  }
+  const win = trayPanelWindow;
+  const cursor = screen.getCursorScreenPoint();
+  const wa = screen.getDisplayNearestPoint(cursor).workArea;
+  // Clamp to the work area: the reported height only fits if the screen has
+  // room for it, and a panel running off-screen is unreachable.
+  const h = Math.min(trayPanelHeight, wa.height - 8);
+  const x = Math.min(Math.max(wa.x + 4, cursor.x - PANEL_W / 2), wa.x + wa.width - PANEL_W - 4);
+  // A top taskbar puts the tray at the top, so anchor below the cursor there
+  // and above it otherwise.
+  const anchorBelow = cursor.y < wa.y + wa.height / 2;
+  const y = anchorBelow
+    ? Math.min(cursor.y + 10, wa.y + wa.height - h - 4)
+    : Math.max(wa.y + 4, cursor.y - h - 10);
+
+  win.setBounds({ x: Math.round(x), y: Math.round(y), width: PANEL_W, height: Math.round(h) });
+  pushPanelState();
+  win.show();
+  // Focus is required for blur-to-hide to work at all. Unlike the update
+  // flyout, this panel is opened by a deliberate click, so taking focus is
+  // what the user asked for.
+  win.focus();
+}
+
+function hideTrayPanel(): void {
+  if (trayPanelWindow && !trayPanelWindow.isDestroyed()) trayPanelWindow.hide();
+}
+
+/**
+ * ONE toggle, shared by the hotkey, the tray panel, and the window. Three
+ * inputs each reimplementing start/stop is how they drift apart.
+ */
+function toggleTraining(): void {
+  if (sessionEngine.isRunning()) {
+    sessionEngine.stop();
+    alertManager.dismiss();
+  } else {
+    configureSession(loadSettings());
+    sessionEngine.start();
+  }
+  pushPanelState();
 }
 
 function cmpRequired(): boolean {
@@ -439,11 +548,13 @@ function registerIpcHandlers(): void {
   ipcMain.handle(IPC.START_TRAINING, () => {
     configureSession(loadSettings());
     sessionEngine.start();
+    pushPanelState();
   });
 
   ipcMain.handle(IPC.STOP_TRAINING, () => {
     sessionEngine.stop();
     alertManager.dismiss();
+    pushPanelState();
   });
 
   ipcMain.handle(IPC.MARK_MANUAL_GLANCE, () => {
@@ -580,15 +691,7 @@ function applySettings(settings: MapSenseSettings): void {
 
   if (settings.hotkey && settings.hotkey !== registeredHotkey) {
     try {
-      globalShortcut.register(settings.hotkey, () => {
-        if (sessionEngine.isRunning()) {
-          sessionEngine.stop();
-          alertManager.dismiss();
-        } else {
-          configureSession(loadSettings());
-          sessionEngine.start();
-        }
-      });
+      globalShortcut.register(settings.hotkey, toggleTraining);
       registeredHotkey = settings.hotkey;
     } catch (err: unknown) {
       console.error('[Main] Failed to register hotkey:', (err as Error).message);
@@ -645,6 +748,7 @@ function wireEvents(): void {
   beamBridge.onStatus = (status) => {
     mainWindow?.webContents.send(IPC.ON_BEAM_STATUS, status);
     trayManager.updateStatus(status);
+    pushPanelState();
     analytics.capture('beam_status_changed', { beamStatus: status });
   };
 
@@ -695,7 +799,7 @@ function initAnalytics(): void {
 }
 
 function initUpdater(): void {
-  trayManager.setUpdateHandler(() => updater.installNow());
+  trayManager.setPanelHandler(showTrayPanel);
   updater.init({
     isPackaged: app.isPackaged,
     // Cache hygiene needs the packaged app-update.yml; dev runs pass null.
@@ -708,7 +812,7 @@ function initUpdater(): void {
     },
     onStateChange: (state) => {
       mainWindow?.webContents.send(IPC.ON_UPDATER_STATE, state);
-      trayManager.updateUpdaterState(state);
+      pushPanelState();
       // Tray-corner flyout for tray-resident sessions; the in-window banner
       // already covers a visible window. Once per staged version.
       if (
@@ -726,6 +830,53 @@ function initUpdater(): void {
   ipcMain.on(IPC.FLYOUT_INSTALL, () => {
     hideUpdateFlyout();
     updater.installNow();
+  });
+
+  ipcMain.on(IPC.PANEL_HEIGHT, (_e, height: number) => {
+    // The renderer measures itself: a hardcoded height only ever fits the
+    // machine it was measured on, since fonts and DPI move it.
+    if (typeof height === 'number' && height > 80 && height < 900) {
+      trayPanelHeight = Math.round(height);
+    }
+  });
+
+  ipcMain.on(IPC.PANEL_ACTION, (_e, name: string) => {
+    switch (name) {
+      case 'toggleTraining':
+        toggleTraining();
+        return;
+      case 'installUpdate':
+        hideTrayPanel();
+        updater.installNow();
+        return;
+      case 'open':
+        hideTrayPanel();
+        mainWindow?.show();
+        mainWindow?.focus();
+        return;
+      case 'log':
+        hideTrayPanel();
+        shell.openPath(path.join(app.getPath('userData'), 'logs'));
+        return;
+      case 'quit':
+        // app.quit() runs cleanup and lets a staged update install on the way
+        // out; process.exit() would skip both.
+        app.quit();
+        return;
+      case 'feedback':
+        hideTrayPanel();
+        shell.openExternal(FEEDBACK_URL);
+        return;
+      case 'discord':
+        hideTrayPanel();
+        shell.openExternal(DISCORD_URL);
+        return;
+      case 'close':
+        hideTrayPanel();
+        return;
+      default:
+        console.warn('[TrayPanel] unknown action:', name);
+    }
   });
 
   ipcMain.on(IPC.FLYOUT_LATER, () => {
@@ -750,6 +901,7 @@ async function bootstrap(): Promise<void> {
   mainWindow = createMainWindow();
   alertOverlayWindow = createAlertOverlay();
   trayManager.create(mainWindow);
+  trayPanelWindow = createTrayPanel();
 
   registerIpcHandlers();
   wireEvents();

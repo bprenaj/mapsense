@@ -8,13 +8,10 @@ describe('IPC channel constants', () => {
     expect(unique.size).toBe(values.length);
   });
 
-  it('all channels are prefixed with mapsense:, overlay:, or flyout:', () => {
+  it('all channels carry a known surface prefix', () => {
+    const prefixes = ['mapsense:', 'overlay:', 'flyout:', 'panel:'];
     for (const value of Object.values(IPC)) {
-      expect(
-        value.startsWith('mapsense:') ||
-          value.startsWith('overlay:') ||
-          value.startsWith('flyout:'),
-      ).toBe(true);
+      expect(prefixes.some((p) => value.startsWith(p)), `Unprefixed channel: ${value}`).toBe(true);
     }
   });
 

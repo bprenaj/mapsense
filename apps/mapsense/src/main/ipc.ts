@@ -36,4 +36,9 @@ export const IPC = {
   FLYOUT_INIT: 'flyout:init',
   FLYOUT_INSTALL: 'flyout:install',
   FLYOUT_LATER: 'flyout:later',
+
+  // Tray quick panel (right-click on the tray; replaces the native menu)
+  PANEL_STATE: 'panel:state',
+  PANEL_ACTION: 'panel:action',
+  PANEL_HEIGHT: 'panel:height',
 } as const;

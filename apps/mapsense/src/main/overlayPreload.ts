@@ -38,3 +38,19 @@ contextBridge.exposeInMainWorld('updateFlyoutApi', {
     ipcRenderer.send(CH_FLYOUT_LATER);
   },
 });
+
+const CH_PANEL_STATE = 'panel:state';
+const CH_PANEL_ACTION = 'panel:action';
+const CH_PANEL_HEIGHT = 'panel:height';
+
+contextBridge.exposeInMainWorld('trayPanelApi', {
+  onState: (cb: (state: unknown) => void) => {
+    ipcRenderer.on(CH_PANEL_STATE, (_e, state) => cb(state));
+  },
+  action: (name: string) => {
+    ipcRenderer.send(CH_PANEL_ACTION, name);
+  },
+  reportHeight: (height: number) => {
+    ipcRenderer.send(CH_PANEL_HEIGHT, height);
+  },
+});

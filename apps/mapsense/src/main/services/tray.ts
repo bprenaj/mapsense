@@ -1,7 +1,6 @@
-import { app, Tray, Menu, nativeImage, BrowserWindow } from 'electron';
+import { Tray, nativeImage, BrowserWindow } from 'electron';
 import * as path from 'path';
 import type { BeamStatus } from '../../shared/constants';
-import type { UpdaterState } from '../../shared/types';
 
 // Branded MapSense tray icons with a status bubble baked in (generated at
 // build time into dist/main/assets). NOTE: nativeImage.createFromBuffer
@@ -30,30 +29,25 @@ export class TrayManager {
   private tray: Tray | null = null;
   private mainWindow: BrowserWindow | null = null;
   private status: BeamStatus = 'not_running';
-  private updaterState: UpdaterState | null = null;
-  private onInstallUpdate: (() => void) | null = null;
+  private onOpenPanel: (() => void) | null = null;
   private hiddenNoticeShown = false;
 
-  setUpdateHandler(onInstallUpdate: () => void): void {
-    this.onInstallUpdate = onInstallUpdate;
-  }
-
-  updateUpdaterState(state: UpdaterState): void {
-    this.updaterState = state;
-    this.updateMenu();
+  /** Right-click opens the app's own quick panel instead of a native menu. */
+  setPanelHandler(onOpenPanel: () => void): void {
+    this.onOpenPanel = onOpenPanel;
   }
 
   create(mainWindow: BrowserWindow): void {
     this.mainWindow = mainWindow;
     this.tray = new Tray(trayIconFor(this.status));
     this.tray.setToolTip(`MapSense - Minimap awareness coach\n${statusLabelFor(this.status)}`);
-    this.updateMenu();
 
     // Windows convention: a single left-click opens the app.
     this.tray.on('click', () => {
       this.mainWindow?.show();
       this.mainWindow?.focus();
     });
+    this.tray.on('right-click', () => this.onOpenPanel?.());
     this.tray.on('double-click', () => {
       this.mainWindow?.show();
       this.mainWindow?.focus();
@@ -69,7 +63,7 @@ export class TrayManager {
     this.hiddenNoticeShown = true;
     this.tray.displayBalloon({
       title: 'MapSense is still running',
-      content: 'Training keeps going in the tray. Click the icon to reopen, right-click to quit.',
+      content: 'Training keeps going in the tray. Click the icon to reopen, right-click for quick controls.',
       iconType: 'info',
     });
   }
@@ -79,7 +73,6 @@ export class TrayManager {
     if (this.tray) {
       this.tray.setImage(trayIconFor(status));
       this.tray.setToolTip(`MapSense - Minimap awareness coach\n${statusLabelFor(status)}`);
-      this.updateMenu();
     }
   }
 
@@ -88,40 +81,5 @@ export class TrayManager {
       this.tray.destroy();
       this.tray = null;
     }
-  }
-
-  private updateMenu(): void {
-    if (!this.tray) return;
-    const statusLabel = statusLabelFor(this.status);
-
-    const template: Electron.MenuItemConstructorOptions[] = [
-      { label: 'MapSense', enabled: false },
-      { type: 'separator' },
-      { label: statusLabel, enabled: false },
-      { type: 'separator' },
-      {
-        label: 'Show Window',
-        click: () => {
-          this.mainWindow?.show();
-          this.mainWindow?.focus();
-        },
-      },
-    ];
-
-    if (this.updaterState?.status === 'ready') {
-      template.push({
-        label: `Restart to Update (v${this.updaterState.availableVersion ?? '?'})`,
-        click: () => this.onInstallUpdate?.(),
-      });
-    }
-
-    template.push({
-      label: 'Quit',
-      // app.quit() runs before-quit cleanup (Beam bridge, webhook server,
-      // shortcuts) and lets a downloaded update install on the way out.
-      click: () => app.quit(),
-    });
-
-    this.tray.setContextMenu(Menu.buildFromTemplate(template));
   }
 }
