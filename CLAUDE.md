@@ -22,7 +22,7 @@
 - Keep wording close to legacy intent; avoid novelty renaming of familiar controls.
 - Keep first-run onboarding and region-first guidance flow.
 - Region selection should be click-drag overlay based, not manual XYWH fields.
-- Keep full session metrics surface (MAS + 9 metrics), not a reduced subset.
+- Keep the full session metrics surface (MAS + 9 metrics) in PRO mode, not a reduced subset. Free mode shows only what it can actually measure (duration, reminders fired) plus one line saying why the rest is absent: with no eye tracker there are no observable glances, so every gaze-derived number would be invented (owner ruling 2026-08-05).
 - Label CMP in UI as ads/privacy consent so non-technical users understand it.
 
 ### Active Documentation
@@ -160,7 +160,11 @@ pytest                 # Testing
 
 ### Beam Eye Tracker SDK Integration
 
-> **Full Beam SDK reference:** See [CLAUDE-BEAMSDK.md](../CLAUDE-BEAMSDK.md) for the complete SDK guide.
+> **Beam SDK reference:** official docs at https://docs.beam.eyeware.tech/
+> (the old `../CLAUDE-BEAMSDK.md` workspace doc no longer exists). The active
+> Electron app talks to the SDK through the `koffi` bridge in
+> `apps/mapsense/src/main/services/beamBridge.ts`; the Python below is the
+> legacy integration.
 
 ```python
 from eyeware import beam_eye_tracker
@@ -348,7 +352,7 @@ Makers can build listeners on Raspberry Pi, Arduino, ESP32, etc. that trigger se
 ## Brand Colours
 
 > Source of truth: `apps/mapsense/src/renderer/styles.css` `:root` (Brand
-> Tokens Rule in the SwissTropic CLAUDE.md). This table is a regenerated
+> Tokens Rule, org repo `team/design/design-law.md`). This table is a regenerated
 > mirror; when they disagree, the CSS wins. Icon tokens come from
 > `apps/mapsense/build/icon-src/BRAND-NOTE.md`.
 
@@ -384,7 +388,6 @@ UI/system-ui fallback). Icon: the copper bell on the navy glow
 
 ## Reference Links
 
-- [Beam SDK Reference (local)](../CLAUDE-BEAMSDK.md)
 - [Beam Eye Tracker Docs](https://docs.beam.eyeware.tech/)
 - [Beam Python API Reference](https://docs.beam.eyeware.tech/api/python/index.html)
 - [Beam on Steam](https://store.steampowered.com/app/2012120/Eyeware_Beam/)
